@@ -1,0 +1,20 @@
+{
+    "gulp": {
+        "javascript": [
+            "JavaScript/*"
+        ],
+        "images": [
+            "Images/*"
+        ],
+        "templates": [
+            "Templates/*"
+        ]
+        
+    },
+    "overrides":{
+        "Advanced/Header/JavaScript/jQuery.sidebarMenu.ts":"JavaScript/jQuery.sidebarMenu.ts",
+        "Advanced/Header/JavaScript/Header.Menu.View.ts":"JavaScript/Header.Menu.View.ts",
+        "Advanced/Header/JavaScript/Header.View.ts":"JavaScript/Header.View.ts",
+        "Advanced/Header/JavaScript/Header.MiniCart.View.ts": "JavaScript/Header.MiniCart.View.ts"
+    }
+}

@@ -4,7 +4,7 @@
     provided, however, if you are an authorized user with a NetSuite account or log-in, you
     may use this code subject to the terms that govern your access and use.
 */
-define("ReorderItems.List.View", ["require", "exports", "underscore", "reorder_items_list.tpl", "Utils", "jQuery", "ReorderItems.Actions.Quantity.View", "Configuration", "ListHeader.View", "GlobalViews.Pagination.View", "GlobalViews.ShowingCurrent.View", "ReorderItems.Collection", "ReorderItems.Actions.AddToCart.View", "Tracker", "LiveOrder.Model", "Backbone.CollectionView", "Transaction.Line.Views.Cell.Actionable.View", "Handlebars", "Backbone.View"], function (require, exports, _, reorder_items_list_tpl, Utils, jQuery, ReorderItems_Actions_Quantity_View_1, Configuration_1, ListHeader_View_1, GlobalViews_Pagination_View_1, GlobalViews_ShowingCurrent_View_1, ReorderItemsCollection, ReorderItemsActionsAddToCartView, Tracker, LiveOrderModel, BackboneCollectionView, TransactionLineViewsCellActionableView, Handlebars, BackboneView) {
+define("ReorderItems.List.View", ["require", "exports", "underscore", "reorder_items_list.tpl", "Utils", "jQuery", "ReorderItems.Actions.Quantity.View", "Configuration", "ListHeader.View", "GlobalViews.Pagination.View", "GlobalViews.ShowingCurrent.View", "ReorderItemCustom.Model", "ReorderItems.Collection", "ReorderItems.Actions.AddToCart.View", "Tracker", "LiveOrder.Model", "Backbone.CollectionView", "Transaction.Line.Views.Cell.Actionable.View", "Handlebars", "Backbone.View"], function (require, exports, _, reorder_items_list_tpl, Utils, jQuery, ReorderItems_Actions_Quantity_View_1, Configuration_1, ListHeader_View_1, GlobalViews_Pagination_View_1, GlobalViews_ShowingCurrent_View_1, ReorderItemCustomModel, ReorderItemsCollection, ReorderItemsActionsAddToCartView, Tracker, LiveOrderModel, BackboneCollectionView, TransactionLineViewsCellActionableView, Handlebars, BackboneView) {
     "use strict";
     // @class ReorderItems.List.View @extends Backbone.View
     var ReorderItemsListView = BackboneView.extend({
@@ -24,10 +24,11 @@ define("ReorderItems.List.View", ["require", "exports", "underscore", "reorder_i
         // @propery {Object} events
         events: {
             'click [data-action="add-to-cart"]': 'addToCart',
-            'change [name="item_quantity"]': 'updateQuantity'
+            'change [name="item_quantity"]': 'updateQuantity',
         },
         // @method initialize
         initialize: function (options) {
+            this.customModel = new ReorderItemCustomModel(); //custom model
             this.application = options.application;
             this.collection = new ReorderItemsCollection();
             var routerOptions;
@@ -37,12 +38,21 @@ define("ReorderItems.List.View", ["require", "exports", "underscore", "reorder_i
             else {
                 routerOptions = { page: 1 };
             }
-            this.options.showCurrentPage = true;
+            // this will always be false to be backward compatible with templates that are
+            // displaying the current page when it should not be done
+            this.options.showCurrentPage = false;
             if (routerOptions.order_id) {
                 this.collection.order_id = routerOptions.order_id;
                 this.order_id = routerOptions.order_id;
                 this.order_number = routerOptions.order_number || 0;
             }
+            var isoDate = Utils.dateToString(new Date());
+            this.rangeFilterOptions = {
+                fromMin: '',
+                fromMax: isoDate,
+                toMin: '',
+                toMax: isoDate
+            };
             this.listenCollection();
             // manges sorting and filtering of the collection
             this.listHeader = new ListHeader_View_1.ListHeaderView({
@@ -50,9 +60,12 @@ define("ReorderItems.List.View", ["require", "exports", "underscore", "reorder_i
                 application: options.application,
                 collection: this.collection,
                 filters: routerOptions.order_id ? null : this.filterOptions,
+                rangeFilter: 'date',
+                rangeFilterLabel: Utils.translate('From'),
                 sorts: routerOptions.order_id ? this.sortOptionsSingleOrder : this.sortOptions,
                 hidePagination: true,
-                headerMarkup: routerOptions.order_id ? this.getOrderLink() : ''
+                headerMarkup: routerOptions.order_id ? this.getOrderLink() : '',
+                isVisible: true
             });
             if (this.order_id) {
                 this.collection.set({

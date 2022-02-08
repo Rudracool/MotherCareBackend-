@@ -49,9 +49,12 @@ const RecentlyViewedItemsView: any = BackboneCollectionView.extend({
         this.collection.promise &&
             this.collection.promise.done(function() {
                 const { application } = self.options;
-                const number_of_items_displayed = application.getConfig(
-                    'recentlyViewedItems.numberOfItemsDisplayed'
-                );
+                const number_of_items_displayed =
+                    application.getConfig().siteSettings.sitetype === 'ADVANCED'
+                        ? application.Configuration.get(
+                              'recentlyViewedItems.numberOfItemsDisplayed'
+                          )
+                        : application.getConfig('recentlyViewedItems.numberOfItemsDisplayed');
 
                 self.collection = self.collection.first(parseInt(number_of_items_displayed));
                 self.render();

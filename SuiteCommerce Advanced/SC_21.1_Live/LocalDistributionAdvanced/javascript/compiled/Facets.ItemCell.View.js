@@ -4,7 +4,7 @@
     provided, however, if you are an authorized user with a NetSuite account or log-in, you
     may use this code subject to the terms that govern your access and use.
 */
-define("Facets.ItemCell.View", ["require", "exports", "underscore", "Utils", "Configuration", "ProductLine.Stock.View", "Product.Model", "GlobalViews.StarRating.View", "Cart.QuickAddToCart.View", "ProductViews.Option.View", "ProductLine.StockDescription.View", "Backbone.View", "Backbone.CollectionView"], function (require, exports, _, Utils, Configuration_1, ProductLineStockView, ProductModel, GlobalViewsStarRating, CartQuickAddToCartView, ProductViewsOptionView, ProductLineStockDescriptionView, BackboneView, BackboneCollectionView) {
+define("Facets.ItemCell.View", ["require", "exports", "underscore", "Utils", "Configuration", "ProductLine.Stock.View", "Product.Model", "GlobalViews.StarRating.View", "Cart.QuickAddToCart.View", "ProductViews.Option.View", "ProductLine.StockDescription.View", "Backbone.View", "Backbone.CollectionView", "Cart.AddToCart.Button.View", "ProductDetails.AddToProductList.View"], function (require, exports, _, Utils, Configuration_1, ProductLineStockView, ProductModel, GlobalViewsStarRating, CartQuickAddToCartView, ProductViewsOptionView, ProductLineStockDescriptionView, BackboneView, BackboneCollectionView, CartAddToCartButtonView, ProductDetailsAddToProductListView) {
     "use strict";
     return BackboneView.extend({
         attributes: {},
@@ -12,6 +12,19 @@ define("Facets.ItemCell.View", ["require", "exports", "underscore", "Utils", "Co
             if (options.template) {
                 this.template = options.template;
             }
+        },
+        events: {
+            'click [data-action="changethumbnail"]': 'thumbnailchange'
+        },
+        thumbnailchange: function (e) {
+            e.preventDefault();
+            var itemimages = this.model.attributes.itemimages_detail;
+            var color = $(e.currentTarget).attr('value');
+            var colrs = itemimages[color];
+            var link = _.findWhere(colrs, "url");
+            var finalurl = link.hasOwnProperty('urls') ? link.urls[0].url : link[0].url;
+            $(e.currentTarget).parentsUntil(".facets-item-cell-grid-details").parent().siblings().find(".facets-item-cell-grid-link-image").html("<img class=\"facets-item-cell-grid-image\" src=\"" + finalurl + "\" alt=\"{{thumbnail.altimagetext}}\" itemprop=\"image\"/>\n        ");
+            $(e.currentTarget).parentsUntil(".item-relations-cell").parent().find(".item-relations-related-item-thumbnail").html("<img class=\"facets-item-cell-grid-image\" src=\"" + finalurl + "\" alt=\"{{thumbnail.altimagetext}}\" itemprop=\"image\"/>\n        ");
         },
         contextData: {
             item: function () {
@@ -22,6 +35,35 @@ define("Facets.ItemCell.View", ["require", "exports", "underscore", "Utils", "Co
             'ItemViews.Stock': function () {
                 return new ProductLineStockView({
                     model: this.model
+                });
+            },
+            'AddToCart': function () {
+                var product = new ProductModel({
+                    item: this.model,
+                    quantity: this.model.get('_minimumQuantity', true),
+                    mybutton: true // for button template customisation
+                });
+                try {
+                    if (this.model.attributes.itemoptions_detail) {
+                        this.itemwithoptions = true;
+                    }
+                }
+                catch (error) {
+                    console.log('error', error);
+                }
+                return new CartAddToCartButtonView({
+                    model: product,
+                    application: this.options.application,
+                });
+            },
+            'WishList': function () {
+                var product = new ProductModel({
+                    item: this.model,
+                    quantity: this.model.get('_minimumQuantity', true)
+                });
+                return new ProductDetailsAddToProductListView({
+                    model: product,
+                    application: this.options.application,
                 });
             },
             'GlobalViews.StarRating': function () {
@@ -68,7 +110,16 @@ define("Facets.ItemCell.View", ["require", "exports", "underscore", "Utils", "Co
                 });
             }
         },
+        getExtraChildrenOptions: function getExtraChildrenOptions() {
+            // @class ProductDetails.QuickView.View.ExtraChildrenOptions
+            return {
+                // @property {Boolean} isModal
+                isModal: true
+            };
+            // @class ProductDetails.QuickView.View
+        },
         getContext: function () {
+            //  console.log(this.model.get('itemoptions_detail'),"anil");
             return {
                 // @property {String} itemId
                 itemId: this.model.get('_id'),
@@ -95,7 +146,8 @@ define("Facets.ItemCell.View", ["require", "exports", "underscore", "Utils", "Co
                 // @property {String} track_productlist_position
                 track_productlist_position: this.model.get('track_productlist_position'),
                 // @property {String} track_productlist_category
-                track_productlist_category: this.model.get('track_productlist_category')
+                track_productlist_category: this.model.get('track_productlist_category'),
+                itemwithoptions: this.model.get('itemoptions_detail') || this.model.get('itemoptions_detail') == "undefined",
             };
         }
     });

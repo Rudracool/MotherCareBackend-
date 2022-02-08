@@ -1,0 +1,13 @@
+{
+    "gulp": {
+        "javascript": [
+            "jquery.jspdf.js",
+            "vfs_fonts.js"
+        ],
+       
+        "images": [
+            "Images/*"
+        ]
+    },
+    "jshint": "false"
+}

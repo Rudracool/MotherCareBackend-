@@ -94,12 +94,20 @@ const OrderWizardModulePaymentMethodThreeDSecure: any = WizardStepModule.extend(
         if (order_info.confirmation && order_info.confirmation.confirmationnumber) {
             this.model.set(order_info);
             this.success();
-        } else if (order_info.confirmation && order_info.confirmation.reasoncode === 'ERR_WS_REQ_SHOPPER_CHALLENGE') {
+        } else if (
+            order_info.confirmation &&
+            order_info.confirmation.reasoncode === 'ERR_WS_REQ_SHOPPER_CHALLENGE'
+        ) {
             this.currentStep = this.steps.SHOPPER_CHALLENGE;
             this.visible = true;
             this.serviceHTML = this.createIFrame(order_info.confirmation.authenticationformaction);
             this.showInModal();
-        } else if (order_info.errorMessage && order_info.body !== '' && !!this.currentStep) {
+        } else if (
+            order_info.confirmation &&
+            order_info.confirmation.reasoncode === 'ERR_WS_REQUIRE_CUSTOMER_LOGIN' &&
+            order_info.confirmation.body !== '' &&
+            !!this.currentStep
+        ) {
             // calls to threedsecure.ssp coming from external sites may fail,
             // it needs to be triggered again from samesite.
             if (this.currentStep === this.steps.DEVICE_AUTHENTICATION) {
@@ -108,7 +116,7 @@ const OrderWizardModulePaymentMethodThreeDSecure: any = WizardStepModule.extend(
                 delete this.currentStep;
             }
             const returnedParameters = encodeURIComponent(
-                '{"' + order_info.body.replace(/( |&amp;)/g, '", "').replace(/=/g, '": "') + '"}'
+                '{"' + order_info.confirmation.body.replace(/( |&amp;)/g, '", "').replace(/=/g, '": "') + '"}'
             );
             this.serviceHTML = this.createIFrame(
                 Utils.getAbsoluteUrl(`threedsecureProxy.ssp?data=${returnedParameters}`)

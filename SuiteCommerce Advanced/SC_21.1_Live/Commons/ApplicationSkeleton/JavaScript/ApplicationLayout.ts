@@ -707,6 +707,9 @@ export abstract class ApplicationLayout extends View<{}, LayoutEvents> {
 
         view.showContent().done(
             (): void => {
+                const cctComponent = this.application.getComponent('CMS');
+                cctComponent.addContents();
+
                 Loggers.getLogger().endLast('Navigation');
             }
         );
@@ -723,6 +726,9 @@ export abstract class ApplicationLayout extends View<{}, LayoutEvents> {
 
         view.showContent().done(
             (): void => {
+                const cctComponent = this.application.getComponent('CMS');
+                cctComponent.addContents();
+
                 Loggers.getLogger().endLast('Navigation');
             }
         );
@@ -738,6 +744,9 @@ export abstract class ApplicationLayout extends View<{}, LayoutEvents> {
 
         view.showContent().done(
             (): void => {
+                const cctComponent = this.application.getComponent('CMS');
+                cctComponent.addContents();
+
                 Loggers.getLogger().endLast('Navigation');
             }
         );

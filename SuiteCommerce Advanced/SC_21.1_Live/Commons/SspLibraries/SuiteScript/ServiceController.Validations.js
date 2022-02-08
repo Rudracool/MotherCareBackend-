@@ -97,11 +97,12 @@ define('ServiceController.Validations', [
             }
         },
 
-        // @method registrationNotRequired Verifies if registration is optional
+        // @method registrationNotRequired Verifies if registration is required
         registrationNotRequired: function() {
+            const { registration } = ModelsInit.session.getSiteSettings(['registration']);
             const isRegistrationMandatory =
-                ModelsInit.session.getSiteSettings(['registration']).registration
-                    .registrationoptional !== 'T';
+                registration.registrationoptional !== 'T' &&
+                registration.registrationmandatory !== 'T';
             const isSCMA =
                 ModelsInit.session.getSiteSettings(['websitescope']).websitescope ===
                 'SUITE_COMMERCE_MY_ACCOUNT';

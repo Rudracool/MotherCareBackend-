@@ -317,7 +317,8 @@
         'jQuery.bxSlider',
         'jQuery.scPush',
         'js.cookie',
-        'zoom'
+        'zoom',
+        "jQuery.slick"
     ];
 
     function mapNames(deps) {

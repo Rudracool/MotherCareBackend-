@@ -4,7 +4,7 @@
     provided, however, if you are an authorized user with a NetSuite account or log-in, you
     may use this code subject to the terms that govern your access and use.
 */
-define("RecentlyViewedItems", ["require", "exports", "RecentlyViewedItems.View", "Cart.Detailed.View"], function (require, exports, RecentlyViewedItemsView, CartDetailedView) {
+define("RecentlyViewedItems", ["require", "exports", "RecentlyViewedItems.View", "Cart.Detailed.View", "ProductDetails.Full.View"], function (require, exports, RecentlyViewedItemsView, CartDetailedView, ProductDetailsFullView) {
     "use strict";
     var RecentlyViewedItems = {
         excludeFromMyAccount: true,
@@ -13,6 +13,15 @@ define("RecentlyViewedItems", ["require", "exports", "RecentlyViewedItems.View",
         // @return {Void}
         mountToApp: function (application) {
             CartDetailedView.addChildViews({
+                'RecentlyViewed.Items': function wrapperFunction() {
+                    return function () {
+                        return new RecentlyViewedItemsView({
+                            application: application
+                        });
+                    };
+                }
+            });
+            ProductDetailsFullView.addChildViews({
                 'RecentlyViewed.Items': function wrapperFunction() {
                     return function () {
                         return new RecentlyViewedItemsView({

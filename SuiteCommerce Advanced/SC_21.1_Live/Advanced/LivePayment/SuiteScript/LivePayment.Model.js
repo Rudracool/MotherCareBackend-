@@ -329,13 +329,14 @@ define('LivePayment.Model', [
                     invoice.discdate = payment_record.getLineItemValue('apply', 'discdate', i);
                     invoice.discamt = payment_record.getLineItemValue('apply', 'discamt', i);
                     invoice.discountapplies =
-                        invoice.due === invoice.total &&
+                        self._isPayFull(invoice) &&
                         (invoice.discdate && stringtodate(invoice.discdate) >= new Date());
                     invoice.duewithdiscount = new BigNumber(invoice.due)
                         .minus(invoice.discountapplies ? invoice.discamt : 0)
                         .toNumber();
 
-                    if (self._isPayFull(invoice) && invoice.discountapplies && invoice.discamt) {
+                    if (invoice.discountapplies && !!invoice.discamt) {
+                        payment_record.setLineItemValue('apply', 'amount', i, invoice.duewithdiscount);
                         payment_record.setLineItemValue('apply', 'disc', i, invoice.discamt);
                     }
                 }
@@ -436,10 +437,7 @@ define('LivePayment.Model', [
         },
 
         _isPayFull: function (invoice) {
-            if (invoice.discountapplies) {
-                return invoice.amount === invoice.duewithdiscount;
-            }
-            return invoice.amount === invoice.due;
+            return parseFloat(invoice.amount) === parseFloat(invoice.due);
         },
 
         submit: function (data) {

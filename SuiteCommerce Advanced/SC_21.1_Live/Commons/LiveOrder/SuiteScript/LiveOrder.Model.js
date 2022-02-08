@@ -195,12 +195,13 @@ define('LiveOrder.Model', [
                     'checkout',
                     '../threedsecure.ssp'
                 );
+                const site_id = ModelsInit.session.getSiteSettings(['siteid']).siteid;
 
                 this.authenticationOptions = {
                     amount: result.summary.total,
                     paymentOption: result.paymentmethods[0].creditcard.internalid,
                     paymentProcessingProfile: paymentMethod.key.split(',')[1],
-                    notificationURL: notificationURL
+                    notificationURL: `${notificationURL}?n=${site_id}`
                 };
             }
 

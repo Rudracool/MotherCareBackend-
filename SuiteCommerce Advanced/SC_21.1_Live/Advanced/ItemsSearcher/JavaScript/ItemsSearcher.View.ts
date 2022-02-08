@@ -111,6 +111,7 @@ const ItemsSearcherView: any = BackboneView.extend({
 
         // @class ItemsSearcher.View.TypeAheadConfiguration
         return {
+            limit: self.options && self.options.limit ? self.options.limit + 1 : '',
             // @property {Function<String,Function>} source
             source: _.debounce(_.bind(self.loadSuggestionItemsSource, self), 500),
             // @property {Function<String>} displayKey Function used to return the string to be displayed on the main input after an item is selected

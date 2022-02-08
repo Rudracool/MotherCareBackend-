@@ -159,7 +159,7 @@ define("ProductDetails.Base.View", ["require", "exports", "underscore", "Utils",
                     self.bindModel();
                     promise.resolve();
                 }
-                else if (jqXhr.status >= 500) {
+                else if (jqXhr.status === 200 && jqXhr.status >= 500) {
                     application.getLayout().internalError();
                     promise.reject();
                 }
@@ -174,7 +174,7 @@ define("ProductDetails.Base.View", ["require", "exports", "underscore", "Utils",
                 // this will stop the ErrorManagment module to process this error
                 // as we are taking care of it
                 jqXhr.preventDefault = true;
-                if (jqXhr.status >= 500) {
+                if (jqXhr.status === 200 && jqXhr.status >= 500) {
                     application.getLayout().internalError();
                     promise.reject();
                 }
@@ -306,9 +306,11 @@ define("ProductDetails.Base.View", ["require", "exports", "underscore", "Utils",
             // searchkeywords is for alternative search keywords that customers might use to find this item using your Web store's internal search
             // they are not for the meta keywords
             // return this.model.get('_keywords');
-            return (this.getMetaTags()
-                .filter('[name="keywords"]')
-                .attr('content') || '');
+            return (this.metaKeywords ||
+                (this.getMetaTags()
+                    .filter('[name="keywords"]')
+                    .attr('content') ||
+                    ''));
         },
         // @method getMetaTags
         // @return {Array<HTMLElement>}
@@ -327,9 +329,11 @@ define("ProductDetails.Base.View", ["require", "exports", "underscore", "Utils",
         // @method getMetaDescription
         // @return {String}
         getMetaDescription: function getMetaDescription() {
-            return (this.getMetaTags()
-                .filter('[name="description"]')
-                .attr('content') || '');
+            return (this.metaDescription ||
+                (this.getMetaTags()
+                    .filter('[name="description"]')
+                    .attr('content') ||
+                    ''));
         },
         showOptionsPusher: function showOptionsPusher() {
             return false;
@@ -411,7 +415,7 @@ define("ProductDetails.Base.View", ["require", "exports", "underscore", "Utils",
                 // @property {String} pageHeader
                 pageHeader: this.page_header,
                 // @property {String} itemUrl
-                itemUrl: item_model.get('_url') + this.model.getQuery(),
+                itemUrl: item_model.get('_url'),
                 // @property {Boolean} isItemProperlyConfigured
                 isItemProperlyConfigured: item_model.isProperlyConfigured(),
                 // @property {Boolean} isPriceEnabled

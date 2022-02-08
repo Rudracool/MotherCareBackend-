@@ -4,7 +4,7 @@
     provided, however, if you are an authorized user with a NetSuite account or log-in, you
     may use this code subject to the terms that govern your access and use.
 */
-define("ItemRelations.RelatedItem.View", ["require", "exports", "item_relations_related_item.tpl", "Utils", "ProductViews.Price.View", "GlobalViews.StarRating.View", "Backbone.View"], function (require, exports, item_relations_related_item_tpl, Utils, ProductViewsPriceView, GlobalViewsStarRatingView, BackboneView) {
+define("ItemRelations.RelatedItem.View", ["require", "exports", "item_relations_related_item.tpl", "Utils", "underscore", "Configuration", "Backbone.CollectionView", "ProductViews.Option.View", "ProductViews.Price.View", "GlobalViews.StarRating.View", "Backbone.View", "Product.Model", "ProductDetails.AddToProductList.View", "Cart.AddToCart.Button.View", "ProductDetails.Options.Selector.View"], function (require, exports, item_relations_related_item_tpl, Utils, _, Configuration_1, BackboneCollectionView, ProductViewsOptionView, ProductViewsPriceView, GlobalViewsStarRatingView, BackboneView, ProductModel, ProductDetailsAddToProductListView, CartAddToCartButtonView, ProductDetailsOptionsSelectorView) {
     "use strict";
     // @class ItemViews.RelatedItem.View Responsible for rendering an item details. The idea is that the item rendered is related to another one in the same page
     // @extend Backbone.View
@@ -14,8 +14,25 @@ define("ItemRelations.RelatedItem.View", ["require", "exports", "item_relations_
         // @method initialize Override default method to make this view composite
         // @param {ItemViews.RelatedItem.View.Initialize.Options} options
         // @return {Void}
-        initialize: function () {
+        initialize: function (options) {
             BackboneView.prototype.initialize.apply(this, arguments);
+        },
+        events: {
+            'click [data-action="changethumbnail"]': 'thumbnailchange'
+        },
+        thumbnailchange: function (e) {
+            e.preventDefault();
+            var itemimages = this.model.attributes.itemimages_detail;
+            var color = $(e.currentTarget).attr('value');
+            var colrs = itemimages[color];
+            var link = _.findWhere(colrs, "url");
+            var finalurl = link.hasOwnProperty('urls') ? link.urls[0].url : link[0].url;
+            if ($(e.currentTarget).parentsUntil(".item-relations-cell").parent().hasClass('item-relations-cell')) {
+                $(e.currentTarget).parentsUntil(".item-relations-cell").parent().find(".item-relations-related-item-thumbnail").html("<img class=\"facets-item-cell-grid-image\" src=\"" + finalurl + "\" alt=\"{{thumbnail.altimagetext}}\" itemprop=\"image\"/>\n            ");
+            }
+            else {
+                $(e.currentTarget).parentsUntil(".recently-viewed-cell-item-cell").parent().find(".item-relations-related-item-thumbnail").html("<img class=\"facets-item-cell-grid-image\" src=\"" + finalurl + "\" alt=\"{{thumbnail.altimagetext}}\" itemprop=\"image\"/>\n            ");
+            }
         },
         contextData: {
             item: function () {
@@ -23,6 +40,68 @@ define("ItemRelations.RelatedItem.View", ["require", "exports", "item_relations_
             }
         },
         childViews: {
+            'ItemDetails.Options': function () {
+                var options_configuration = Configuration_1.Configuration.get('ItemOptions.optionsConfiguration', []);
+                return new BackboneCollectionView({
+                    collection: _.filter(this.model.get('options').sortBy('index'), function (option) {
+                        var option_configuration = _.findWhere(options_configuration, {
+                            cartOptionId: option.get('cartOptionId')
+                        });
+                        return option_configuration && option_configuration.showSelectorInList;
+                    }),
+                    childView: ProductViewsOptionView,
+                    viewsPerRow: 1,
+                    childViewOptions: {
+                        item: this.model,
+                        templateName: 'facetCell',
+                        showLink: true,
+                        hideLabel: true,
+                        showSmall: true
+                    }
+                });
+            },
+            AddToCart: function () {
+                var product = new ProductModel({
+                    item: this.model,
+                    quantity: this.model.get('_minimumQuantity', true),
+                    mybutton: true // for button template customisation
+                });
+                try {
+                    if (this.model.attributes.itemoptions_detail) {
+                        this.itemwithoptions = true;
+                    }
+                }
+                catch (error) {
+                    // console.log('error', error)
+                }
+                return new CartAddToCartButtonView({
+                    model: product,
+                    application: this.parentView.options.application,
+                });
+            },
+            'Product.Options': function () {
+                var product = new ProductModel({
+                    item: this.model,
+                    quantity: this.model.get('_minimumQuantity', true),
+                    mybutton: true,
+                });
+                return new ProductDetailsOptionsSelectorView({
+                    model: product,
+                    application: this.parentView.options.application,
+                    show_pusher: true,
+                    show_required_label: false //this.model.get('item').get('itemtype') === 'GiftCert'
+                });
+            },
+            AddToProductList: function () {
+                var product = new ProductModel({
+                    item: this.model,
+                    quantity: this.model.get('_minimumQuantity', true)
+                });
+                return new ProductDetailsAddToProductListView({
+                    model: product,
+                    application: this.parentView.options.application,
+                });
+            },
             'Item.Price': function () {
                 return new ProductViewsPriceView({
                     model: this.model,
@@ -36,11 +115,14 @@ define("ItemRelations.RelatedItem.View", ["require", "exports", "item_relations_
                 });
             }
         },
-        // @method getContext
+        // @method getContext 
         // @returns {ItemViews.RelatedItem.View.Context}
         getContext: function () {
             // @class ItemViews.RelatedItem.View.Context
             return {
+                url: this.model.get("_url"),
+                itemwithoptions: this.model.get('itemoptions_detail') || this.model.get('itemoptions_detail') == "undefined",
+                iscustom: true,
                 // @property {String} itemURL
                 itemURL: this.model.getFullLink(),
                 // @property {String} itemName

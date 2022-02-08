@@ -21,8 +21,22 @@ define("Home.View", ["require", "exports", "underscore", "home.tpl", "Utils", "j
         initSlider: function initSlider() {
             Utils.initBxSlider(this.$('[data-slider]'), {
                 nextText: '<a class="home-gallery-next-icon"></a>',
-                prevText: '<a class="home-gallery-prev-icon"></a>'
+                prevText: '<a class="home-gallery-prev-icon"></a>',
             });
+            //     if(jQuery(window).width() < 768)
+            //  {
+            //    $('.home-banner-text').bxSlider({
+            //            controls: true,
+            //            maxSlides: 1,
+            //            minSlides: 1,
+            //            moveSlides: 1,
+            //            pager: false,
+            //            preloadImages: "all",
+            //            nextText: '<a class="home-banner-prev-icon"></a>',
+            //            prevText: '<a class="home-banner-next-icon"></a>',
+            //            touchEnabled: true
+            //     })
+            //  }
         },
         initialize: function () {
             this.windowWidth = jQuery(window).width();

@@ -21,6 +21,8 @@ define("Facets.Browse.CategoryHeading.View", ["require", "exports", "facets_brow
                 pageheading: this.model.get('pageheading') || this.model.get('name'),
                 // @property {Boolean} hasBanner
                 hasBanner: !!this.model.get('pagebannerurl'),
+                // @property
+                thumbnail: this.model.get('thumbnailurl'),
                 // @property {Object} additionalFields
                 additionalFields: additionalFields,
                 // @property {Boolean} showDescription

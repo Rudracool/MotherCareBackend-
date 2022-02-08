@@ -36,7 +36,7 @@ import * as ReturnAuthorization from '../../ReturnAuthorization/JavaScript/Retur
 import * as ReorderItems from '../../ReorderItems/JavaScript/ReorderItems';
 import * as Receipt from '../../Receipt/JavaScript/Receipt';
 import * as GoogleTagManager from '../../GoogleTagManager/JavaScript/GoogleTagManager';
-import * as AjaxRequestsKiller from '../../../Commons/AjaxRequestsKiller/JavaScript/AjaxRequestsKiller';
+import { AjaxRequestsKiller } from '../../../Commons/AjaxRequestsKiller/JavaScript/AjaxRequestsKiller';
 import * as Merchandising from '../../Merchandising/JavaScript/Merchandising';
 import * as Balance from '../../Balance/JavaScript/Balance';
 import * as Invoice from '../../Invoice/JavaScript/Invoice';

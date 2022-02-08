@@ -44,7 +44,7 @@ import * as SocialSharingPluginsGooglePlus from '../../SocialSharing/JavaScript/
 import * as SocialSharingPluginsPinterest from '../../SocialSharing/JavaScript/SocialSharing.Plugins.Pinterest';
 import * as SocialSharingPluginsPinterestHover from '../../SocialSharing/JavaScript/SocialSharing.Plugins.Pinterest.Hover';
 import * as SocialSharingPluginsAddThis from '../../SocialSharing/JavaScript/SocialSharing.Plugins.AddThis';
-import * as AjaxRequestsKiller from '../../../Commons/AjaxRequestsKiller/JavaScript/AjaxRequestsKiller';
+import { AjaxRequestsKiller } from '../../../Commons/AjaxRequestsKiller/JavaScript/AjaxRequestsKiller';
 import * as ImageNotAvailable from '../../ImageNotAvailable/JavaScript/ImageNotAvailable';
 import * as Merchandising from '../../Merchandising/JavaScript/Merchandising';
 import * as CheckoutSkipLogin from '../../CheckoutSkipLogin/JavaScript/CheckoutSkipLogin';

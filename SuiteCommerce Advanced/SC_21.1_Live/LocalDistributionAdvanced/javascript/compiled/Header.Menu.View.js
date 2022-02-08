@@ -11,7 +11,11 @@ define("Header.Menu.View", ["require", "exports", "header_menu.tpl", "jQuery", "
         events: {
             'mouseenter [data-toggle="categories-menu"]': 'menuOpen',
             'mouseleave [data-toggle="categories-menu"]': 'menuClose',
-            'click [data-toggle="categories-menu"]': 'menuClose'
+            'click [data-toggle="categories-menu"]': 'menuClose',
+            'click .header-mobile-en-icon ': 'lanopen',
+            'click [data-action="header-sidebar-nav-close"]': 'closeMenuSideBar',
+            'click [data-action="dropdown-arrow1"]': 'dropDownArrow1',
+            'click [data-action="dropdown-sub_catagories"]': 'dropDownSubCatagories'
         },
         menuOpen: function (e) {
             jQuery(e.currentTarget).addClass('open');
@@ -19,8 +23,37 @@ define("Header.Menu.View", ["require", "exports", "header_menu.tpl", "jQuery", "
         menuClose: function (e) {
             jQuery(e.currentTarget).removeClass('open');
         },
+        lanopen: function () {
+            this.$(".header-mobile-language-tab").toggle();
+        },
+        closeMenuSideBar: function () {
+            $('.header-secondary-wrapper').css("width", "0");
+            $('#main').removeClass('header-sidebar-opened');
+        },
+        dropDownArrow1: function (e) {
+            jQuery(e.currentTarget).closest('li').toggleClass("showMenu");
+        },
+        dropDownSubCatagories: function (e) {
+            jQuery(e.currentTarget).closest('li').toggleClass("showSubMenu");
+        },
         initialize: function () {
+            // this.on('afterViewRender',() =>{
+            //     let arrow=this.$('.sidebar .nav-links').find('.arrow1');
             var _this = this;
+            //     for (var i = 0; i < arrow.length; i++) {
+            //         arrow[i].addEventListener("click", (e)=>{
+            //             let arrowParent =$(e.target).closest('li');
+            //             arrowParent.toggleClass("showMenu");
+            //         });
+            //     }
+            //     let sub_catagories = this.$('.sidebar .nav-links').find('.sub_catagories1');
+            //     for (var i = 0; i < sub_catagories.length; i++) {
+            //         sub_catagories[i].addEventListener("click", (e)=>{
+            //             let sub_catagoriesParent = $(e.target).closest('li');//selecting main parent of arrow
+            //             sub_catagoriesParent.toggleClass("showSubMenu");
+            //         });
+            //     }
+            // });
             var self = this;
             this.application = this.options.application;
             this.application.on('Configuration.navigationData', function () { return _this.render(); });

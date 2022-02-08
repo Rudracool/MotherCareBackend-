@@ -11,6 +11,8 @@ define("ProductReviews.Center.View", ["require", "exports", "underscore", "produ
         attributes: {
             id: 'item-product-reviews',
             class: 'item-product-reviews item-detailed-reviews'
+        }, events: {
+            'click [data-toggle="morereviewsbtn"]': 'reviewsbtn'
         },
         initialize: function (options) {
             this.item = options.item;
@@ -39,6 +41,10 @@ define("ProductReviews.Center.View", ["require", "exports", "underscore", "produ
                 });
                 self.reviewsPromise.resolve();
             });
+        },
+        reviewsbtn: function () {
+            console.log("data-toggle");
+            $(".product-reviews-center-review-container").toggleClass("reveal-open");
         },
         render: function render() {
             this._render();

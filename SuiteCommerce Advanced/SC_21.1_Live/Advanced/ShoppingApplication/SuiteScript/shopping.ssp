@@ -172,7 +172,7 @@
 
 <%
 if (Configuration.get().cms.useCMS && Configuration.get().cms.adapterVersion !== '2') { %>
-	<script src="/cms/<%= Configuration.get().cms.adapterVersion %>/cms.js" defer></script>
+	<script src="/cms/<%= Configuration.get().cms.adapterVersion %>/cms.js"></script>
 <% } %>
 
 <script>

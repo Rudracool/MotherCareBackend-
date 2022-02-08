@@ -40,6 +40,13 @@ define("Transaction.List.View", ["require", "exports", "underscore", "Utils", "C
                             name: 'amount',
                             value: transaction.get('amount_formatted')
                         };
+                    case 'entitystatus':
+                        return {
+                            label: Utils.translate(column.label),
+                            type: 'status',
+                            name: 'entitystatus',
+                            value: transaction.get('entitystatus').name
+                        };
                     default:
                         var init = {
                             label: Utils.translate(column.label),

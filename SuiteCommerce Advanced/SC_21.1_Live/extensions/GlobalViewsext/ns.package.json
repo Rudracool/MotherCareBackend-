@@ -1,0 +1,19 @@
+{
+    "gulp": {
+        "javascript": [
+            "JavaScript/*"
+        ],
+        "images": [
+            "Images/*"
+        ],
+        "templates": [
+            "Templates/*"
+        ]
+        
+    },
+    "overrides":{
+           "Commons/GlobalViews/JavaScript/GlobalViews.Pagination.View.ts": "JavaScript/GlobalViews.Pagination.View.ts"
+    }
+}
+
+

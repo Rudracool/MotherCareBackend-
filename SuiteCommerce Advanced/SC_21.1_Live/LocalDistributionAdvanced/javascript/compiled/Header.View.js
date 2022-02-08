@@ -4,7 +4,7 @@
     provided, however, if you are an authorized user with a NetSuite account or log-in, you
     may use this code subject to the terms that govern your access and use.
 */
-define("Header.View", ["require", "exports", "underscore", "header.tpl", "Utils", "jQuery", "Configuration", "Profile.Model", "Header.Logo.View", "Header.MiniCart.View", "Header.MiniCartSummary.View", "Header.Profile.View", "Header.Menu.View", "GlobalViews.HostSelector.View", "GlobalViews.CurrencySelector.View", "Backbone", "Backbone.View"], function (require, exports, _, header_tpl, Utils, jQuery, Configuration_1, Profile_Model_1, HeaderLogoView, HeaderMiniCartView, HeaderMiniCartSummaryView, HeaderProfileView, HeaderMenuView, GlobalViewsHostSelectorView, GlobalViewsCurrencySelectorView, Backbone, BackboneView) {
+define("Header.View", ["require", "exports", "underscore", "header.tpl", "Utils", "jQuery", "Configuration", "Profile.Model", "Header.Logo.View", "Header.MiniCart.View", "Header.MiniCartSummary.View", "Header.Profile.View", "Header.Menu.View", "GlobalViews.HostSelector.View", "GlobalViews.CurrencySelector.View", "MyAccountMenu", "Backbone", "Backbone.View", "ProductList.Utils"], function (require, exports, _, header_tpl, Utils, jQuery, Configuration_1, Profile_Model_1, HeaderLogoView, HeaderMiniCartView, HeaderMiniCartSummaryView, HeaderProfileView, HeaderMenuView, GlobalViewsHostSelectorView, GlobalViewsCurrencySelectorView, MyAccountMenu_1, Backbone, BackboneView, ProductList_Utils_1) {
     "use strict";
     return BackboneView.extend({
         template: header_tpl,
@@ -17,6 +17,18 @@ define("Header.View", ["require", "exports", "underscore", "header.tpl", "Utils"
         initialize: function () {
             Backbone.history.on('all', this.verifyShowSiteSearch, this);
             this.application = this.options.application;
+            this.productListModule = new ProductList_Utils_1.ProductListUtils(this.options.application);
+            this.isProductListEnabled = this.productListModule.isProductListEnabled();
+            this.debounced_render = _.debounce(_.bind(this.render, this), 250);
+            if (this.isProductListEnabled) {
+                this.productListsPromise = this.productListModule.getProductListsPromise();
+            }
+            else {
+                this.productListsPromise = jQuery.Deferred();
+            }
+            MyAccountMenu_1.MyAccountMenu.getInstance()
+                .getEmitter()
+                .on('entriesChanged', this.debounced_render);
         },
         // @method showMiniCart
         // @return {Void}
@@ -36,7 +48,10 @@ define("Header.View", ["require", "exports", "underscore", "header.tpl", "Utils"
         // Keeping this here to be backward compatible with themes prior to 2018.2.0, do not use this!
         hideSiteSearch: function () {
             // This hide Sitesearch div
-            this.$('[data-type="SiteSearch"]').hide();
+            if (Utils.getDeviceType() == 'phone') {
+                this.$('[data-type="SiteSearch"]').hide();
+            }
+            this.$('[data-type="SiteSearch"]').show();
         },
         // Keeping this here to be backward compatible with themes prior to 2018.2.0, do not use this!
         verifyShowSiteSearch: function () {
@@ -44,13 +59,12 @@ define("Header.View", ["require", "exports", "underscore", "header.tpl", "Utils"
                 var hash = Backbone.history.getFragment() || '';
                 hash = hash.indexOf('?') === -1 ? hash : hash.substring(0, hash.indexOf('?'));
                 var is_home = hash === '' || hash === '/';
-                if (Utils.getDeviceType() !== 'desktop' && is_home) {
-                    this.showSiteSearch(null, true);
-                }
-                else {
-                    // This hide sitesearch when navigate
-                    this.hideSiteSearch();
-                }
+                // if (Utils.getDeviceType() !== 'desktop' && is_home) {
+                //     this.showSiteSearch(null, true);
+                // } else {
+                //     // This hide sitesearch when navigate
+                //     this.hideSiteSearch();
+                // }
             }
         },
         getChildViews: function () {
@@ -71,6 +85,8 @@ define("Header.View", ["require", "exports", "underscore", "header.tpl", "Utils"
         // @return {Void}
         showSidebar: function () {
             jQuery('#main').addClass('header-sidebar-opened');
+            jQuery('.header-secondary-wrapper').css("width", "100%");
+            jQuery('.sidebar').css("overflow-y", "auto");
         },
         // @method hideSidebar
         // @return {Void}
@@ -116,6 +132,18 @@ define("Header.View", ["require", "exports", "underscore", "header.tpl", "Utils"
         // @method getContext
         // @return {Header.View.Context}
         getContext: function getContext() {
+            var wishlistArry = [];
+            var wishlistData = MyAccountMenu_1.MyAccountMenu.getInstance().getEntries();
+            var self = this;
+            _.each(wishlistData, function (data) {
+                if (data.id == 'productlists') {
+                    var getProductName = data.children;
+                    wishlistArry.push(data);
+                    self.productlists = data;
+                }
+                // console.log(data);
+            });
+            // console.log(self.productlists,"Arry");
             var environment = SC.ENVIRONMENT;
             var isLoggedIn = Profile_Model_1.ProfileModel.getInstance().get('isLoggedIn') === 'T';
             var show_languages = !!(environment.availableHosts &&
@@ -127,6 +155,7 @@ define("Header.View", ["require", "exports", "underscore", "header.tpl", "Utils"
                 !Configuration_1.Configuration.get('header.notShowCurrencySelector');
             // @class Header.View.Context
             return {
+                list: self.productlists,
                 // @property {Boolean} isStandalone
                 isStandalone: this.application.isStandalone(),
                 // @property {Boolean} isReorderEnabled
@@ -149,7 +178,8 @@ define("Header.View", ["require", "exports", "underscore", "header.tpl", "Utils"
                     ? Configuration_1.Configuration.currentTouchpoint
                     : 'viewcart',
                 // @property {Boolean} isPhoneDevice
-                isPhoneDevice: Utils.isPhoneDevice()
+                isPhoneDevice: Utils.isPhoneDevice(),
+                ifLogin: isLoggedIn
             };
             // @class Header.View
         },

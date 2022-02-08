@@ -1,0 +1,19 @@
+{
+    "gulp": {
+        "javascript": [
+            "JavaScript/*"
+        ],
+        "ssp-libraries": [
+            "SuiteScript/*.js"
+        ],
+        "templates": [
+            "Templates/*"
+        ],
+        "images": [
+            "Images/*"
+        ]
+    },
+    "overrides":{
+        "Commons/ProductReviews/JavaScript/ProductReviews.Center.View.ts":"JavaScript/ProductReviews.Center.View.ts"
+    }
+}

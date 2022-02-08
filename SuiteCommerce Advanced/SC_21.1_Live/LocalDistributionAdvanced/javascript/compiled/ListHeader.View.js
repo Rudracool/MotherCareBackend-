@@ -4,9 +4,10 @@
     provided, however, if you are an authorized user with a NetSuite account or log-in, you
     may use this code subject to the terms that govern your access and use.
 */
-define("ListHeader.View", ["require", "exports", "underscore", "list_header_view.tpl", "Utils", "jQuery", "Configuration", "GlobalViews.Pagination.View", "GlobalViews.ShowingCurrent.View", "AjaxRequestsKiller", "UrlHelper", "Backbone.View", "Backbone", "bootstrap-datepicker"], function (require, exports, _, list_header_view_tpl, Utils, jQuery, Configuration_1, GlobalViews_Pagination_View_1, GlobalViews_ShowingCurrent_View_1, AjaxRequestsKiller_1, UrlHelper_1, BackboneView, Backbone) {
+define("ListHeader.View", ["require", "exports", "underscore", "list_header_view.tpl", "Utils", "jQuery", "Configuration", "GlobalViews.Pagination.View", "GlobalViews.ShowingCurrent.View", "AjaxRequestsKiller", "UrlHelper", "ReorderItemCustom.Model", "Backbone.View", "Backbone", "Profile.Model", "bootstrap-datepicker"], function (require, exports, _, list_header_view_tpl, Utils, jQuery, Configuration_1, GlobalViews_Pagination_View_1, GlobalViews_ShowingCurrent_View_1, AjaxRequestsKiller_1, UrlHelper_1, ReorderItemCustomModel, BackboneView, Backbone, Profile_Model_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    // import jsHtml = require('../../../Commons/Utilities/JavaScript/jQuery.vfcFonts.Custom');
     // @class ListHeader.View
     // View used to manipulate a collection by adding sorting and filtering capabilities
     // based on the sort and filter options from the collection
@@ -21,6 +22,7 @@ define("ListHeader.View", ["require", "exports", "underscore", "list_header_view
             'click [data-action="toggle-sort"]': 'toggleSortHandler',
             'change [data-action="select-all"]': 'selectAll',
             'change [data-action="unselect-all"]': 'unselectAll',
+            'click [data-action="download_btn"]': 'generateprocess',
             /*
              * range-filter focus/blur work together to update the date range when:
              * Blur happens on a field and user don't focus on the other during a defined interval
@@ -35,7 +37,9 @@ define("ListHeader.View", ["require", "exports", "underscore", "list_header_view
         // @return {Void}
         initialize: function (options) {
             var view = options.view;
+            this.CustomName = Profile_Model_1.ProfileModel.getInstance();
             _.extend(this, options);
+            this.isVisible = options.isVisible; //custom download content
             // @property {Boolean} avoidFirstFetch true only if the module using
             // list header is the one responsible of fetching the collection
             // for the first time (optional)
@@ -58,10 +62,94 @@ define("ListHeader.View", ["require", "exports", "underscore", "list_header_view
             this.eventName = options.eventName;
             // @property {Boolean} to allows if "from" or "to" date filters can be empty
             this.allowEmptyBoundaries = options.allowEmptyBoundaries;
+            this.customModel = new ReorderItemCustomModel(); //custom model
         },
         destroy: function () {
             this.clearRangeFilterTimeout();
             this._destroy();
+        },
+        generateprocess: function (e) {
+            e.preventDefault();
+            var conceptName = this.$('#checkDownload').find(":selected").val();
+            var emptyArray = [];
+            var emptyPrice = [];
+            if (this.collection.totalRecordsFound > 0) {
+                var any = this.collection.models;
+                _.map(any, function (value) {
+                    var itemname = value.attributes.item.attributes._name;
+                    var skuname = value.attributes.item.attributes.itemid;
+                    var transdate = value.attributes.trandate;
+                    var price = value.attributes.item.attributes.onlinecustomerprice_detail.onlinecustomerprice_formatted;
+                    var SubtotalPrice = value.attributes.item.attributes.onlinecustomerprice_detail.onlinecustomerprice;
+                    var emptyObj = {
+                        ItemName: itemname,
+                        ItemSkuId: skuname,
+                        LastPurchase: transdate,
+                        Price: price
+                    };
+                    emptyArray.push(emptyObj);
+                    emptyPrice.push(SubtotalPrice);
+                });
+                if (_.isEqual(conceptName, 'downloadCsv')) {
+                    this.generateCsv(emptyArray);
+                }
+                else if (_.isEqual(conceptName, 'downloadPDF')) {
+                    this.generatePdf(emptyArray, emptyPrice);
+                }
+            }
+        },
+        generateCsv: function generateCsv(jsonData) {
+            var headdingRows = Object.keys(jsonData[0]);
+            var csv = '';
+            headdingRows = headdingRows.join(',');
+            csv += headdingRows;
+            csv += '\n';
+            _.each(jsonData, function (value) {
+                for (var key in value) {
+                    csv += value[key].replace(/,/g, '') + ',';
+                }
+                csv += '\r\n';
+            });
+            window.open('data:text/csv;charset=utf-8,' + encodeURIComponent(csv));
+        },
+        generatePdf: function (pdfData, Price) {
+            var headdingRows = Object.keys(pdfData[0]);
+            // adding heading content
+            var theadRow = '<tr>';
+            theadRow += ' <th class="no">#</th>';
+            for (var i = 0; i < headdingRows.length; i++) {
+                theadRow += "<th class=\"heading_0" + (i + 1) + "\"> " + headdingRows[i] + "</th>";
+            }
+            theadRow += '</tr>';
+            var headingText = "ReOrder Item";
+            var customerFirstName = this.CustomName.get('firstname') || '';
+            var customerEmail = this.CustomName.get('email') || '';
+            var customerLastName = this.CustomName.get('lastname') || '';
+            var Customername = customerFirstName + " " + customerLastName;
+            var dateFormat = this.collection.CustomDateFilter();
+            var tr = '<tr class="bodySec">';
+            _.map(pdfData, function (value, keys) {
+                var k = Object.keys(value);
+                tr += "<td class=\"no\">" + (keys + 1) + " </td>";
+                for (var key in value) {
+                    tr += "<td class=\"heading_0\" align=\"center\"> " + value[key] + "</td>";
+                }
+                tr += '</tr>';
+            });
+            var reducer = function (accumulator, curr) { return accumulator + curr; };
+            var totalPrice = Price.reduce(reducer);
+            var getHtmlData = this.collection.htmlFile;
+            var replaceData = getHtmlData.replace("headingContent1", headingText);
+            replaceData = replaceData.replace("Customername", Customername);
+            replaceData = replaceData.replace("tableData", tr);
+            replaceData = replaceData.replace("totalPriceAddition", totalPrice);
+            replaceData = replaceData.replace("theadRow", theadRow);
+            replaceData = replaceData.replace("headingContent2", headingText);
+            replaceData = replaceData.replace("DateFormat.fromDate", dateFormat.fromDate);
+            replaceData = replaceData.replace("DateFormat.toDate", dateFormat.toDate);
+            replaceData = replaceData.replace("john@example.com", customerEmail);
+            replaceData = replaceData.replace("any@example.com", customerEmail);
+            Utils.createPDF(replaceData);
         },
         childViews: {
             'GlobalViews.Pagination': function () {
@@ -123,6 +211,7 @@ define("ListHeader.View", ["require", "exports", "underscore", "list_header_view
                 headerMarkup: _.isFunction(this.headerMarkup) ? this.headerMarkup() : this.headerMarkup,
                 // @property {String} classes
                 classes: this.classes || '',
+                isVisible: this.isVisible,
                 // @property {Boolean} showHeaderExpandable
                 showHeaderExpandable: !hideHeaderExpandable,
                 // @property {Array} displays
