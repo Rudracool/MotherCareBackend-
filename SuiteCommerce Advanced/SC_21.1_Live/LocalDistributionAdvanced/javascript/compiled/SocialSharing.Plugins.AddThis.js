@@ -1,0 +1,81 @@
+/*
+    © 2020 NetSuite Inc.
+    User may not copy, modify, distribute, or re-bundle or otherwise make available this code;
+    provided, however, if you are an authorized user with a NetSuite account or log-in, you
+    may use this code subject to the terms that govern your access and use.
+*/
+define("SocialSharing.Plugins.AddThis", ["require", "exports", "underscore", "jQuery", "Configuration", "SocialSharing"], function (require, exports, _, jQuery, Configuration_1, SocialSharing) {
+    "use strict";
+    // @class SocialSharing.AddThis @extends ApplicationModule
+    var addthisPlugin = {
+        excludeFromMyAccount: true,
+        // @method refreshAddThisElements
+        // re-writes the DOM of the AddThis elements
+        refreshAddThisElements: function () {
+            if (typeof addthis === 'undefined' || !jQuery('[data-type="share-in-add-this"]').length) {
+                return;
+            }
+            var metaTagMappingOg = Configuration_1.Configuration.get('metaTagMappingOg');
+            var innerHTML = '';
+            _.each(Configuration_1.Configuration.get('addThis.servicesToShow'), function (name, code) {
+                innerHTML += '<a class="addthis_button_' + code + '">' + name + '</a>';
+            });
+            var share_options = {
+                url: metaTagMappingOg['og:url'](this),
+                title: metaTagMappingOg['og:title'](this),
+                description: metaTagMappingOg['og:description'](this)
+            };
+            jQuery('[data-type="share-in-add-this"]').each(function () {
+                if (this) {
+                    var $this = jQuery(this);
+                    $this.html(innerHTML).addClass(Configuration_1.Configuration.get('addThis.toolboxClass'));
+                    addthis.toolbox(this, Configuration_1.Configuration.get('addThis.options'), share_options);
+                }
+            });
+        },
+        mountToApp: function (application) {
+            if (Configuration_1.Configuration.get('addThis.enable')) {
+                var layout = application.getLayout();
+                // This are mostly related to the dom, or to events, so we add them in the layout
+                _.extend(layout, {
+                    refreshAddThisElements: this.refreshAddThisElements,
+                    addthis_script_loaded: false
+                });
+                // @class SocialSharing.AddThis.Plugin @extends ApplicationModule
+                var plugin = {
+                    name: 'addthisPlugin',
+                    priority: 10,
+                    execute: function (application) {
+                        var layout = application.getLayout();
+                        if (!jQuery('[data-type="share-in-add-this"]').length) {
+                            layout.$el
+                                .find('[data-type="social-share-icons"]')
+                                .append('<div href="#" class="add-this-btn" data-type="share-in-add-this"></div>');
+                        }
+                        if (jQuery('[data-type="share-in-add-this"]').length) {
+                            if (!layout.addthis_script_loaded) {
+                                layout.addthis_script_loaded = true;
+                                var addthis_script_url = (document.location.protocol === 'https:' ? 'https://' : 'http://') +
+                                    's7.addthis.com/js/300/addthis_widget.js#domready=1';
+                                // avoid on SEO and start addthis library
+                                SC.ENVIRONMENT.jsEnvironment === 'browser' &&
+                                    jQuery.getScript(addthis_script_url, function () {
+                                        layout.refreshAddThisElements();
+                                    });
+                            }
+                            else {
+                                // Then addthis plugins are called
+                                layout.refreshAddThisElements();
+                            }
+                        }
+                    }
+                };
+                SocialSharing.afterAppendView.install(plugin);
+                SocialSharing.afterAppendToDom.install(plugin);
+            }
+        }
+    };
+    return addthisPlugin;
+});
+
+//# sourceMappingURL=SocialSharing.Plugins.AddThis.js.map

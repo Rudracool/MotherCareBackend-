@@ -1,0 +1,177 @@
+<%/*
+	© 2020 NetSuite Inc.
+	User may not copy, modify, distribute, or re-bundle or otherwise make available this code;
+	provided, however, if you are an authorized user with a NetSuite account or log-in, you
+	may use this code subject to the terms that govern your access and use.
+*/%><%
+    var SecurityHeaders = require('SecurityHeaders');
+    SecurityHeaders.addSecurityHeaders(response);
+
+	var Configuration = require('Configuration');
+	var session = require('SC.Models.Init').session
+		password_protected_site = session.getSiteSettings(['siteloginrequired']).siteloginrequired==='T';
+
+	password_protected_site && response.setCDNCacheable(response.CACHE_DURATION_UNIQUE);
+
+	if (password_protected_site && !session.isLoggedIn2())
+	{
+		nlapiSetRedirectURL('EXTERNAL', session.getSiteSettings(['touchpoints']).touchpoints.login);
+		return;
+	}
+
+	var ROOT_BASE = 'http://localhost'
+	,	ROOT = ROOT_BASE + ':7777/'
+	,	Application = require('Application')
+	,	Environment = Application.getEnvironment(request)
+	,	Language = Environment.currentLanguage && Environment.currentLanguage.locale || ''
+	,	Currency = request.getParameter('cur');
+
+	if(Environment.standalone) {
+	    var route = request.getSSPURL().split('/').pop();
+	    if(!session.isLoggedIn2()) {
+	        nlapiSetRedirectURL('EXTERNAL', session.getSiteSettings(['touchpoints']).touchpoints.login);
+            return;
+	    } else if (!Environment.reorderEnabled || route.indexOf('cart') === -1) {
+	        nlapiSetRedirectURL('EXTERNAL', session.getSiteSettings(['touchpoints']).touchpoints.customercenter);
+            return;
+	    }
+    }
+
+ %>
+
+<!DOCTYPE html>
+<html <%= Language ? 'lang="' + Language.replace('_', '-')+ '"' : '' %>>
+<head>
+    <script>
+		if(location.hash.indexOf('cart') === -1 && <%= Environment.standalone %>) {
+		    // adds cart with # so that the route is resolved
+		    window.location.href = window.location.href+'#cart';
+		}
+	</script>
+	<script>
+		window.applicationStartTime = Date.now();
+	</script>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta name="robots" content="nofollow,noindex">
+	<link rel="shortcut icon" href="<%= ROOT %><%= Application.getFaviconPath() %>img/favicon.ico" />
+	<title>Shopping</title>
+	<script>
+function Deferred(){this.status="started",this.data=void 0,this.doneCb=[]}function loadJSON(e,n){window.loadedResourcesPromises=window.loadedResourcesPromises||{};var r=new Deferred;window.loadedResourcesPromises[n]=r;var t=new XMLHttpRequest;return t.open("GET",e),t.onreadystatechange=function(){4===t.readyState&&200===t.status&&r.resolve(JSON.parse(t.responseText))},t.send(null),r}function loadScript(e){window.loadedResourcesPromises=window.loadedResourcesPromises||{};var n=window.loadedResourcesPromises[e]=new Deferred,r=document.createElement("script");function t(){n.resolve()}return r.src=e,r.onerror=t,r.onload=t,document.head.appendChild(r),n}function isObject(e){return e&&"object"==typeof e&&!Array.isArray(e)}function merge(e,n){if(isObject(e)&&isObject(n))for(var r,t=Object.keys(n),o=0;o<t.length;o++)!isObject(n[r=t[o]])||void 0===e[r]?e[r]=n[r]:merge(e[r],n[r]);return e}function _each(e,n){for(var r=0;r<e.length;r++)n(e[r],r)}Deferred.prototype.done=function(e){"resolved"===this.status?e(this.data):this.doneCb.push(e)},Deferred.prototype.resolve=function(e){this.data=e,this.status="resolved";for(var n=0;n<this.doneCb.length;n++)this.doneCb[n](this.data);return this},Deferred.all=function(e){for(var n=Object.keys(e),r=0,t=new Deferred,o=0;o<n.length;o++)e[n[o]].done(function(){++r===n.length&&t.resolve()});return t};var SC=window.SC={ENVIRONMENT:{jsEnvironment:"undefined"==typeof nsglobal?"browser":"server"},isCrossOrigin:function(){return"<%= Environment.currentHostString %>"!==document.location.hostname},isPageGenerator:function(){return"undefined"!=typeof nsglobal},getSessionInfo:function(e){var n=SC.SESSION||SC.DEFAULT_SESSION||{};return e?n[e]:n},getPublishedObject:function(e){return SC.ENVIRONMENT&&SC.ENVIRONMENT.published&&SC.ENVIRONMENT.published[e]?SC.ENVIRONMENT.published[e]:null}};SC.isDevelopment=!0;	</script>
+	<script src="<%= session.getAbsoluteUrl2("public/shopping.environment.ssp?lang=" + Language + "&cur=" + Currency + "&X-SC-Touchpoint=shopping") %>&t=1633100603836" ></script>
+	<script src="<%= session.getAbsoluteUrl2("public/shopping.environment.shortcache.ssp?X-SC-Touchpoint=shopping") %>&t=1633100603836" ></script>
+</head>
+
+<body>
+
+<noscript>
+	<div class="shopping-layout-no-javascript-msg">
+		<strong>JavaScript is disabled on your browser.</strong><br>
+		To view this site, you must enable JavaScript or upgrade to a JavaScript-capable browser.
+	</div>
+</noscript>
+
+<div id="main" class="main"></div>
+<script>
+var hash,datetime;history.pushState||"browser"!==SC.ENVIRONMENT.jsEnvironment||"/"===location.pathname&&""===location.search||""!==location.hash||("/"===location.pathname?(hash=(RegExp("fragment=(.+?)(&|$)").exec(location.search)||[,""])[1],location.replace(location.pathname+location.search+"/#"+unescape(hash))):location.replace("/#"+location.pathname+location.search),document.write("")),SC.isCrossOrigin()||(document.getElementById("main").innerHTML="",SC.isPageGenerator()&&(document.body.className=document.body.className+" seo-support"),SC.ENVIRONMENT.seoSupport=!!~document.body.className.indexOf("seo-support"),SC.isPageGenerator()&&(SC.ENVIRONMENT.PROFILE={}),"browser"!=SC.ENVIRONMENT.jsEnvironment||SC.isCrossOrigin()||(datetime=(new Date).getTime(),loadJSON('<%= session.getAbsoluteUrl2("services/ShoppingUserEnvironment.Service.ss?lang=" + Language + "&cur=" + Currency + "&X-SC-Touchpoint=shopping") %>&t='+datetime,"shoppingUserEnvironment").done(function(e){merge(SC,e),SC.PROFILE_PROMISE&&SC.PROFILE_PROMISE.resolve(SC.ENVIRONMENT.PROFILE)})));</script>
+
+<script type="text/javascript" src="<%= session.getAbsoluteUrl("languages/shopping_" + Language + ".js") %>?t=1633100603836" ></script>
+
+<script type="text/javascript">
+<%
+	var js_files = _.difference(app_includes.shopping.js, app_includes.shopping.templates)
+	,	extensions_js = isExtended ? _.last(js_files) : ''
+	,	core_js = _.without(js_files, extensions_js);
+%>
+
+	var isExtended = !!<%= isExtended %>
+	,	local_dependencies = {
+			css: '<%= session.getAbsoluteUrl2(app_includes.shopping.css[0])%>?t=1633100603836'
+		,	templates: '<%= session.getAbsoluteUrl2(app_includes.shopping.templates[0])%>?t=1633100603836'
+		,	js_core: '<%= session.getAbsoluteUrl2(core_js[0]) %>?t=1633100603836'
+		};
+
+	if(isExtended)
+	{
+		local_dependencies.js_extensions = '<%= session.getAbsoluteUrl2(extensions_js)%>?t=1633100603836';
+	}
+
+    if(!SC.isPageGenerator())
+    {
+        var local_resources_promise = new Deferred();
+        window.loadedResourcesPromises['local_resources_promise'] = local_resources_promise;
+
+        loadJSON('<%= ROOT %>who/shopping', 'who_service').done(function(resources)
+        {
+            var current_promise = (new Deferred()).resolve();
+            _each(resources, function(resource)
+            {
+                //If "who" didn't provide a local url use the backend one
+                var url = resource.url || local_dependencies[resource.resource];
+
+                if(url)
+                {
+                    var promise = new Deferred();
+                    current_promise.done(function()
+                    {
+                        var tag = document.createElement(resource.tag);
+
+                        if(resource.tag === 'link')
+                        {
+                            tag.rel = "stylesheet";
+                            tag.type = "text/css";
+                            tag.href = url;
+                            promise.resolve();
+                        }
+                        else
+                        {
+                            tag.type = 'text/javascript';
+                            tag.src = url;
+                            //called in this way to don't lose the promise context
+                            tag.onload = function(){
+                                promise.resolve();
+                            };
+                        }
+                        document.getElementsByTagName("head")[0].appendChild(tag);
+                    });
+                    current_promise = promise;
+                }
+            });
+
+            //called in this way to don't lose the promise context
+            current_promise.done(function()
+            {
+                local_resources_promise.resolve();
+            });
+        });
+
+        var startApplication = function() {
+	require(["Loggers", "Loggers.Configuration.SCA"], function(Loggers, LoggersConfiguration) {
+		Loggers.Loggers.setConfiguration(LoggersConfiguration.configuration);
+	});
+
+	require(["SC.Shopping.Starter"]);
+	
+}
+
+if(!window.loadedResourcesPromises){
+	startApplication();
+} else {
+	Deferred.all(window.loadedResourcesPromises)
+	.done(function(){
+            	try
+            	{
+			startApplication();
+            	}catch(e){
+                	document.getElementById('main').style.display = "block";
+        	}
+	});
+}
+
+    }
+</script>
+</body>
+
+</html>

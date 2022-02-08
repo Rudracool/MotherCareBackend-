@@ -1,0 +1,10 @@
+{
+    "gulp": {
+        "configuration": [
+            "Configuration/*.json"
+        ],
+        "ssp-libraries": [
+            "SuiteScript/*.js"
+        ]
+    }
+}
