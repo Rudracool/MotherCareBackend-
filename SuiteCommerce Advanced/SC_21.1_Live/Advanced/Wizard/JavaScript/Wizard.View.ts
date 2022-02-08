@@ -115,7 +115,8 @@ const WizardView: any = BackboneView.extend({
         // @class Wizard.View.Context
         return {
             // @property {Boolean} showBreadcrumb
-            showBreadcrumb: !this.wizard.getCurrentStep().hideBreadcrumb
+            showBreadcrumb:
+                this.wizard.getCurrentStep() && !this.wizard.getCurrentStep().hideBreadcrumb
         };
         // @class Wizard.View
     }

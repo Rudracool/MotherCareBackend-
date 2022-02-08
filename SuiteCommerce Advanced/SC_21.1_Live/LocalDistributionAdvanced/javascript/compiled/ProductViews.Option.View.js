@@ -53,6 +53,9 @@ define("ProductViews.Option.View", ["require", "exports", "underscore", "Configu
         // @returns {ProductViews.Option.View.Context}
         getContext: function () {
             var self = this;
+            if (this.model.attributes.itemOptionId == "custitem22") { //custitem37, custitem36
+                this.labelcolor = this.model.attributes.label;
+            }
             var selected_value = this.model.get('value') || {};
             var values = _.map(this.model.get('values'), function (value) {
                 var color = '';
@@ -92,6 +95,7 @@ define("ProductViews.Option.View", ["require", "exports", "underscore", "Configu
             });
             // @class ProductViews.Option.View.Context
             return {
+                labelcolor: this.labelcolor,
                 // @property {Transaction.Line.Option.Model} model
                 model: this.model,
                 // @property {Array<ItemOptions.Option.View.Value>} values

@@ -13,6 +13,7 @@ import * as item_relations_row_tpl from 'item_relations_row.tpl';
 import * as item_relations_cell_tpl from 'item_relations_cell.tpl';
 import * as Utils from '../../Utilities/JavaScript/Utils';
 import { Configuration } from '../../Utilities/JavaScript/Configuration';
+import * as jQuery from '../../Core/JavaScript/jQuery';
 
 import BackboneCollectionView = require('../../Backbone.CollectionView/JavaScript/Backbone.CollectionView');
 import ItemRelationsRelatedItemView = require('./ItemRelations.RelatedItem.View');
@@ -23,8 +24,8 @@ import Backbone = require('../../Utilities/JavaScript/backbone.custom');
 const ItemRelationsRelatedView = BackboneCollectionView.extend({
     initialize: function() {
         const { siteSettings } = this.options.application.getConfig();
-        const is_sca_advance = siteSettings.sitetype === 'ADVANCED';
-        const collection = is_sca_advance
+        this.is_sca_advance = siteSettings.sitetype === 'ADVANCED';
+        const collection = this.is_sca_advance
             ? new ItemRelationsRelatedCollection({ itemsIds: this.options.itemsIds })
             : new Backbone.Collection();
 
@@ -38,17 +39,44 @@ const ItemRelationsRelatedView = BackboneCollectionView.extend({
         });
 
         this.view_tracked = false;
+        this.loadRelatedItem();
+    },
+    render: function() {
+        BackboneCollectionView.prototype.render.call(this);
+        if (this.is_sca_advance) {
+            const layout = this.options.application.getLayout();
+            if (!jQuery.contains(document.documentElement, this.$el[0])) {
+                layout.once('afterAppendView', this.carouselInitialize, this);
+            } else {
+                this.carouselInitialize();
+            }
+        }
+        return this;
+    },
 
-        if (is_sca_advance) {
-            this.once('afterCompositeViewRender', this.loadRelatedItem, this);
+    carouselInitialize: function carouselInitialize() {
+        const { siteSettings, imageSizeMapping } = this.options.application.getConfig();
+        const carousel = this.$el.find('[data-type="carousel-items"]');
+
+        if (carousel.length > 0) {
+            if (Utils.isPhoneDevice() === false && (siteSettings.imagesizes || false)) {
+                const img_min_height = (<any>_.where(siteSettings.imagesizes || [], {
+                    name: imageSizeMapping.thumbnail || ''
+                })[0]).maxheight;
+
+                carousel
+                    .find('.item-relations-related-item-thumbnail')
+                    .css('minHeight', img_min_height);
+            }
+
+            Utils.initBxSlider(carousel, Configuration.get('bxSliderDefaults', {}));
         }
     },
 
     loadRelatedItem: function loadRelatedItem() {
         const self = this;
 
-        self.collection.fetchItems().done(function() {
-            const { siteSettings, imageSizeMapping } = self.options.application.getConfig();
+        self.collection.fetchItems().then(function() {
             if (self.collection.length) {
                 if (!self.view_tracked) {
                     Tracker.getInstance().trackProductListEvent(self.collection, 'Related Items');
@@ -57,22 +85,6 @@ const ItemRelationsRelatedView = BackboneCollectionView.extend({
             }
 
             self.render();
-
-            setTimeout(function() {
-                const carousel = self.$el.find('[data-type="carousel-items"]');
-
-                if (Utils.isPhoneDevice() === false && (siteSettings.imagesizes || false)) {
-                    const img_min_height = (<any>_.where(siteSettings.imagesizes || [], {
-                        name: imageSizeMapping.thumbnail || ''
-                    })[0]).maxheight;
-
-                    carousel
-                        .find('.item-relations-related-item-thumbnail')
-                        .css('minHeight', img_min_height);
-                }
-
-                Utils.initBxSlider(carousel, Configuration.get('bxSliderDefaults', {}));
-            });
         });
     },
 

@@ -1,0 +1,17 @@
+{
+    "gulp": {
+        "javascript": [
+            "JavaScript/*"
+        ],
+        "templates": [
+            "Templates/*"
+        ],
+        "images": [
+            "Images/*"
+        ]
+    },
+    "overrides":
+    {
+           "Commons/ProductList/JavaScript/ProductList.Control.View.ts":"JavaScript/ProductList.Control.View.ts"           
+    }
+}

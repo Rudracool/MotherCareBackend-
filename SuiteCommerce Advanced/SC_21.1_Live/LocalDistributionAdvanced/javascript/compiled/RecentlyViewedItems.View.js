@@ -31,7 +31,9 @@ define("RecentlyViewedItems.View", ["require", "exports", "underscore", "recentl
             this.collection.promise &&
                 this.collection.promise.done(function () {
                     var application = self.options.application;
-                    var number_of_items_displayed = application.getConfig('recentlyViewedItems.numberOfItemsDisplayed');
+                    var number_of_items_displayed = application.getConfig().siteSettings.sitetype === 'ADVANCED'
+                        ? application.Configuration.get('recentlyViewedItems.numberOfItemsDisplayed')
+                        : application.getConfig('recentlyViewedItems.numberOfItemsDisplayed');
                     self.collection = self.collection.first(parseInt(number_of_items_displayed));
                     self.render();
                     var carousel = self.$el.find('[data-type="carousel-items"]');
@@ -45,7 +47,10 @@ define("RecentlyViewedItems.View", ["require", "exports", "underscore", "recentl
                             .find('.item-relations-related-item-thumbnail')
                             .css('minHeight', img_min_height);
                     }
-                    Utils.initBxSlider(carousel, Configuration_1.Configuration.bxSliderDefaults);
+                    var itemspager = {
+                        pager: true
+                    };
+                    Utils.initBxSlider(carousel, _.extend(Configuration_1.Configuration.bxSliderDefaults, itemspager));
                 });
         }
     });

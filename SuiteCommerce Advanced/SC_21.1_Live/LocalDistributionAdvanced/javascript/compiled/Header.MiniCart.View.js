@@ -37,6 +37,7 @@ define("Header.MiniCart.View", ["require", "exports", "header_mini_cart.tpl", "U
             // on tablet or desktop make the minicart dropdown
             if (Utils.isTabletDevice() ||
                 Utils.isDesktopDevice() ||
+                Utils.isPhoneDevice() ||
                 SC.CONFIGURATION.addToCartBehavior === 'showMiniCart') {
                 this.$('[data-type="mini-cart"]').attr('data-toggle', 'dropdown');
             }

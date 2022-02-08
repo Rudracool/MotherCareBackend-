@@ -20,113 +20,122 @@
 	{
 		order_info = {};
 
-		response.setCDNCacheable(response.CACHE_DURATION_UNIQUE);
+        if (ModelsInit.session.isLoggedIn2()) {
+            response.setCDNCacheable(response.CACHE_DURATION_UNIQUE);
 
-		const cardHolderAuthenticationRecordId = ModelsInit.context.getSessionObject('cardHolderAuthenticationRecordId');
+            const cardHolderAuthenticationRecordId = ModelsInit.context.getSessionObject('cardHolderAuthenticationRecordId');
 
-		if (cardHolderAuthenticationRecordId)
-		{
-			var cardHolderAuthenticationRecord = CardHolderAuthenticationModel.searchById(cardHolderAuthenticationRecordId);
-			const cardHolderAuthenticationRecordStatus = cardHolderAuthenticationRecord.getValue('status');
-		}
+            if (cardHolderAuthenticationRecordId)
+            {
+                var cardHolderAuthenticationRecord = CardHolderAuthenticationModel.searchById(cardHolderAuthenticationRecordId);
+                const cardHolderAuthenticationRecordStatus = cardHolderAuthenticationRecord.getValue('status');
+            }
 
-		if (!cardHolderAuthenticationRecordId || cardHolderAuthenticationRecordStatus === 'AUTHENTICATED')
-		{
-			ModelsInit.context.setSessionObject('cardHolderAuthenticationRecordId', null);
+            if (!cardHolderAuthenticationRecordId || cardHolderAuthenticationRecordStatus === 'AUTHENTICATED')
+            {
+                ModelsInit.context.setSessionObject('cardHolderAuthenticationRecordId', null);
 
-			// Submit the order
-			confirmation = LiveOrderModel.submit(true);
-		}
-		else
-		{
-			if (cardHolderAuthenticationRecordStatus === 'WAITING_FOR_DEVICE_AUTHENTICATION')
-			{
-				if (this.request.body !== "") {
-				var returnedParameters = '{"' + this.request.body.replace(/( |&)/g, '", "').replace(/=/g, '": "') + '"}';
-                    CardHolderAuthenticationModel.loadAndSubmitWithReturnedParameters(cardHolderAuthenticationRecord.id, 'AUTHENTICATE_DEVICE', returnedParameters);
-                }else if(request.getAllParameters().length > 0 ) {
-                    var params = request.getAllParameters();
-                    CardHolderAuthenticationModel.loadAndSubmitWithReturnedParameters(cardHolderAuthenticationRecord.id, 'AUTHENTICATE_DEVICE', params["data"]);
-                }
-
-                CardHolderAuthenticationModel.setStatus(cardHolderAuthenticationRecordId, 'RETURN_FROM_DEVICE_AUTHENTICATION');
-
-				cardHolderAuthenticationRecord = CardHolderAuthenticationModel.searchById(cardHolderAuthenticationRecordId);
-
-				if (cardHolderAuthenticationRecord.getValue('status') === 'AUTHENTICATED' || cardHolderAuthenticationRecord.getValue('status') === 'NOT_REQUIRED')
-				{
-					// Submit the order
-					confirmation = LiveOrderModel.submit(true);
-					ModelsInit.context.setSessionObject('cardHolderAuthenticationRecordId', null);
-
-				}
-				else if(cardHolderAuthenticationRecord.getValue('status') === 'CANCELLED')
-				{
-				    const reason = cardHolderAuthenticationRecord.getValue('threedstranstatusreason');
-				    if(!!reason){
-				        throw reason;
+                // Submit the order
+                confirmation = LiveOrderModel.submit(true);
+            }
+            else
+            {
+                if (cardHolderAuthenticationRecordStatus === 'WAITING_FOR_DEVICE_AUTHENTICATION')
+                {
+                    if (this.request.body !== "") {
+                    var returnedParameters = '{"' + this.request.body.replace(/( |&)/g, '", "').replace(/=/g, '": "') + '"}';
+                        CardHolderAuthenticationModel.loadAndSubmitWithReturnedParameters(cardHolderAuthenticationRecord.id, 'AUTHENTICATE_DEVICE', returnedParameters);
+                    }else if(request.getAllParameters().length > 0 ) {
+                        var params = request.getAllParameters();
+                        CardHolderAuthenticationModel.loadAndSubmitWithReturnedParameters(cardHolderAuthenticationRecord.id, 'AUTHENTICATE_DEVICE', params["data"]);
                     }
-				    throw 'An error has occurred';
-                } else {
-					const challengeShopperFormURL = ModelsInit.session.getAbsoluteUrl2(
-												'checkout',
-												CardHolderAuthenticationUtils.getUrl(
-													'',
-													'challengeShopperForm',
-													cardHolderAuthenticationRecord.getValue(
-														'challengeshopperformaction'
-													),
-													cardHolderAuthenticationRecord.getValue('challengeshopperformid'),
-													CardHolderAuthenticationModel.searchChallengeShopperInputFields(
-														cardHolderAuthenticationRecordId
-													)
-												)
-											);
-					confirmation =
-					{
-						statuscode: "error",
-						reasoncode: "ERR_WS_REQ_SHOPPER_CHALLENGE",
-						cardholderauthenticationid: cardHolderAuthenticationRecord.id,
-						authenticationformaction: challengeShopperFormURL
-					}
-				}
-			}
-			else if (cardHolderAuthenticationRecordStatus === 'WAITING_FOR_SHOPPER_CHALLENGE')
-			{
-                if (this.request.body !== "") {
-				    var returnedParameters = '{"' + this.request.body.replace(/( |&)/g, '", "').replace(/=/g, '": "') + '"}';
-				CardHolderAuthenticationModel.loadAndSubmitWithReturnedParameters(cardHolderAuthenticationRecord.id, 'SHOPPER_CHALLENGE', returnedParameters);
-                }else if(request.getAllParameters().length > 0 ) {
-                    var params = request.getAllParameters();
-                    CardHolderAuthenticationModel.loadAndSubmitWithReturnedParameters(cardHolderAuthenticationRecord.id, 'SHOPPER_CHALLENGE', params["data"]);
+
+                    CardHolderAuthenticationModel.setStatus(cardHolderAuthenticationRecordId, 'RETURN_FROM_DEVICE_AUTHENTICATION');
+
+                    cardHolderAuthenticationRecord = CardHolderAuthenticationModel.searchById(cardHolderAuthenticationRecordId);
+
+                    if (cardHolderAuthenticationRecord.getValue('status') === 'AUTHENTICATED' || cardHolderAuthenticationRecord.getValue('status') === 'NOT_REQUIRED')
+                    {
+                        // Submit the order
+                        confirmation = LiveOrderModel.submit(true);
+                        ModelsInit.context.setSessionObject('cardHolderAuthenticationRecordId', null);
+
+                    }
+                    else if(cardHolderAuthenticationRecord.getValue('status') === 'CANCELLED')
+                    {
+                        const reason = cardHolderAuthenticationRecord.getValue('threedstranstatusreason');
+                        if(!!reason){
+                            throw reason;
+                        }
+                        throw 'An error has occurred';
+                    } else {
+                        const challengeShopperFormURL = ModelsInit.session.getAbsoluteUrl2(
+                                                    'checkout',
+                                                    CardHolderAuthenticationUtils.getUrl(
+                                                        '',
+                                                        'challengeShopperForm',
+                                                        cardHolderAuthenticationRecord.getValue(
+                                                            'challengeshopperformaction'
+                                                        ),
+                                                        cardHolderAuthenticationRecord.getValue('challengeshopperformid'),
+                                                        CardHolderAuthenticationModel.searchChallengeShopperInputFields(
+                                                            cardHolderAuthenticationRecordId
+                                                        )
+                                                    )
+                                                );
+                        confirmation =
+                        {
+                            statuscode: "error",
+                            reasoncode: "ERR_WS_REQ_SHOPPER_CHALLENGE",
+                            cardholderauthenticationid: cardHolderAuthenticationRecord.id,
+                            authenticationformaction: challengeShopperFormURL
+                        }
+                    }
                 }
+                else if (cardHolderAuthenticationRecordStatus === 'WAITING_FOR_SHOPPER_CHALLENGE')
+                {
+                    if (this.request.body !== "") {
+                        var returnedParameters = '{"' + this.request.body.replace(/( |&)/g, '", "').replace(/=/g, '": "') + '"}';
+                    CardHolderAuthenticationModel.loadAndSubmitWithReturnedParameters(cardHolderAuthenticationRecord.id, 'SHOPPER_CHALLENGE', returnedParameters);
+                    }else if(request.getAllParameters().length > 0 ) {
+                        var params = request.getAllParameters();
+                        CardHolderAuthenticationModel.loadAndSubmitWithReturnedParameters(cardHolderAuthenticationRecord.id, 'SHOPPER_CHALLENGE', params["data"]);
+                    }
 
-                CardHolderAuthenticationModel.setStatus(cardHolderAuthenticationRecord.id, 'RETURN_FROM_SHOPPER_CHALLENGE');
+                    CardHolderAuthenticationModel.setStatus(cardHolderAuthenticationRecord.id, 'RETURN_FROM_SHOPPER_CHALLENGE');
 
-				cardHolderAuthenticationRecord = CardHolderAuthenticationModel.searchById(cardHolderAuthenticationRecordId);
-				if (cardHolderAuthenticationRecord.getValue('status') === 'AUTHENTICATED')
-				{
-					// Submit the order
-					confirmation = LiveOrderModel.submit(true);
-					ModelsInit.context.setSessionObject('cardHolderAuthenticationRecordId', null);
-				}
-				else
-				{
-					throw "An error has occurred"
-				}
-			}
-			else
-			{
-				throw "An error has occurred"
-			}
-		}
+                    cardHolderAuthenticationRecord = CardHolderAuthenticationModel.searchById(cardHolderAuthenticationRecordId);
+                    if (cardHolderAuthenticationRecord.getValue('status') === 'AUTHENTICATED')
+                    {
+                        // Submit the order
+                        confirmation = LiveOrderModel.submit(true);
+                        ModelsInit.context.setSessionObject('cardHolderAuthenticationRecordId', null);
+                    }
+                    else
+                    {
+                        throw "An error has occurred"
+                    }
+                }
+                else
+                {
+                    throw "An error has occurred"
+                }
+            }
+        } else {
+            confirmation =
+            {
+                statuscode: "error",
+                reasoncode: "ERR_WS_REQUIRE_CUSTOMER_LOGIN",
+                cardholderauthenticationid: null,
+                body: _.escape(this.request.body)
+            }
+        }
 	}
 	catch(e)
 	{
 		order_info =
 		{
-			errorMessage: e,
-			body: _.escape(this.request.body)
+			errorMessage: e
 		};
 
 		ModelsInit.context.setSessionObject('cardHolderAuthenticationRecordId', null);

@@ -528,15 +528,19 @@ define("ApplicationLayout", ["require", "exports", "underscore", "Utils", "jQuer
         };
         // @method notFound Shortcut to display the PageNotFoundView
         ApplicationLayout.prototype.notFound = function () {
+            var _this = this;
             var view = new PageNotFoundView({
                 application: this.application
             });
             view.showContent().done(function () {
+                var cctComponent = _this.application.getComponent('CMS');
+                cctComponent.addContents();
                 Loggers_1.Loggers.getLogger().endLast('Navigation');
             });
         };
         // @method internalError Shortcut to display the InternalErrorView
         ApplicationLayout.prototype.internalError = function (message, pageHeader, title) {
+            var _this = this;
             var view = new InternalErrorView({
                 application: this.application,
                 message: message,
@@ -544,17 +548,22 @@ define("ApplicationLayout", ["require", "exports", "underscore", "Utils", "jQuer
                 title: title
             });
             view.showContent().done(function () {
+                var cctComponent = _this.application.getComponent('CMS');
+                cctComponent.addContents();
                 Loggers_1.Loggers.getLogger().endLast('Navigation');
             });
         };
         // @method expiredLink @param {String} message
         ApplicationLayout.prototype.expiredLink = function (message) {
+            var _this = this;
             var view = new ExpiredLinkView({
                 application: this.application,
                 pageHeader: message,
                 title: message
             });
             view.showContent().done(function () {
+                var cctComponent = _this.application.getComponent('CMS');
+                cctComponent.addContents();
                 Loggers_1.Loggers.getLogger().endLast('Navigation');
             });
         };

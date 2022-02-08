@@ -50,6 +50,13 @@ const TransactionListView: any = BackboneView.extend({
                         name: 'amount',
                         value: transaction.get('amount_formatted')
                     };
+                case 'entitystatus':
+                    return {
+                        label: Utils.translate(column.label),
+                        type: 'status',
+                        name: 'entitystatus',
+                        value: transaction.get('entitystatus').name
+                    };
                 default:
                     var init: any = {
                         label: Utils.translate(column.label),

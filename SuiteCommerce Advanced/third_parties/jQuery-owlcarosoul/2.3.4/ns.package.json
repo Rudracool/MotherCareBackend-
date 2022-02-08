@@ -1,0 +1,14 @@
+{
+    "gulp": {
+        "javascript": [
+            "jquery.owl.js"
+        ],
+        "sass": [
+            "_jquery-owl.scss"
+           ],
+        "images": [
+            "Images/*"
+        ]
+    },
+    "jshint": "false"
+}

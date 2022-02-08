@@ -146,7 +146,8 @@ define("Cart.AddToCart.Button.View", ["require", "exports", "underscore", "cart_
                 // Indicate if the current item is valid to be purchase or not
                 isCurrentItemPurchasable: this.model.getItem().get('_isPurchasable'),
                 // @property {Boolean} isUpdate
-                isUpdate: !this.model.isNew() && this.model.get('source') === 'cart'
+                isUpdate: !this.model.isNew() && this.model.get('source') === 'cart',
+                relateditemsaddtocart: this.model.get('mybutton'),
             };
             // @class Cart.AddToCart.Button.View
         }

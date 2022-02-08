@@ -40,7 +40,7 @@ import * as SocialSharingPluginsPinterest from '../../SocialSharing/JavaScript/S
 import * as SocialSharingPluginsPinterestHover from '../../SocialSharing/JavaScript/SocialSharing.Plugins.Pinterest.Hover';
 import * as SocialSharingPluginsAddThis from '../../SocialSharing/JavaScript/SocialSharing.Plugins.AddThis';
 import * as ProductReviews from '../../../Commons/ProductReviews/JavaScript/ProductReviews';
-import * as AjaxRequestsKiller from '../../../Commons/AjaxRequestsKiller/JavaScript/AjaxRequestsKiller';
+import { AjaxRequestsKiller } from '../../../Commons/AjaxRequestsKiller/JavaScript/AjaxRequestsKiller';
 import * as CookieWarningBanner from '../../CookieWarningBanner/JavaScript/CookieWarningBanner';
 import * as ImageNotAvailable from '../../ImageNotAvailable/JavaScript/ImageNotAvailable';
 import * as Merchandising from '../../Merchandising/JavaScript/Merchandising';

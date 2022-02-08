@@ -1,6 +1,6 @@
 __sc_ssplibraries_t0 = new Date().getTime(); 
 window.suiteLogs = window.suiteLogs || false; 
-release_metadata = {"name":"SuiteCommerce Advanced","prodbundle_id":"374192","baselabel":"SCA_2021.1.4","version":"2021.1.4","datelabel":"2021.03.23","buildno":"0"}
+release_metadata = {"name":"SuiteCommerce Advanced","prodbundle_id":"374192","baselabel":"SCA_2021.1.6","version":"2021.1.6","datelabel":"2021.03.23","buildno":"0"}
 /*
     © 2020 NetSuite Inc.
     User may not copy, modify, distribute, or re-bundle or otherwise make available this code;
@@ -5275,10 +5275,11 @@ define('ServiceController.Validations', [
                 throw unauthorizedError;
             }
         },
-        // @method registrationNotRequired Verifies if registration is optional
+        // @method registrationNotRequired Verifies if registration is required
         registrationNotRequired: function () {
-            var isRegistrationMandatory = ModelsInit.session.getSiteSettings(['registration']).registration
-                .registrationoptional !== 'T';
+            var registration = ModelsInit.session.getSiteSettings(['registration']).registration;
+            var isRegistrationMandatory = registration.registrationoptional !== 'T' &&
+                registration.registrationmandatory !== 'T';
             var isSCMA = ModelsInit.session.getSiteSettings(['websitescope']).websitescope ===
                 'SUITE_COMMERCE_MY_ACCOUNT';
             if (isRegistrationMandatory || isSCMA) {
@@ -6944,11 +6945,12 @@ define('LiveOrder.Model', [
                 result.paymentmethods[0].creditcard) {
                 var paymentMethod = result.paymentmethods[0].creditcard.paymentmethod;
                 var notificationURL = ModelsInit.session.getAbsoluteUrl2('checkout', '../threedsecure.ssp');
+                var site_id = ModelsInit.session.getSiteSettings(['siteid']).siteid;
                 this.authenticationOptions = {
                     amount: result.summary.total,
                     paymentOption: result.paymentmethods[0].creditcard.internalid,
                     paymentProcessingProfile: paymentMethod.key.split(',')[1],
-                    notificationURL: notificationURL
+                    notificationURL: notificationURL + "?n=" + site_id
                 };
             }
             // @class LiveOrder.Model
@@ -14825,12 +14827,13 @@ define('LivePayment.Model', [
                     invoice.discdate = payment_record.getLineItemValue('apply', 'discdate', i);
                     invoice.discamt = payment_record.getLineItemValue('apply', 'discamt', i);
                     invoice.discountapplies =
-                        invoice.due === invoice.total &&
+                        self._isPayFull(invoice) &&
                             (invoice.discdate && stringtodate(invoice.discdate) >= new Date());
                     invoice.duewithdiscount = new BigNumber(invoice.due)
                         .minus(invoice.discountapplies ? invoice.discamt : 0)
                         .toNumber();
-                    if (self._isPayFull(invoice) && invoice.discountapplies && invoice.discamt) {
+                    if (invoice.discountapplies && !!invoice.discamt) {
+                        payment_record.setLineItemValue('apply', 'amount', i, invoice.duewithdiscount);
                         payment_record.setLineItemValue('apply', 'disc', i, invoice.discamt);
                     }
                 }
@@ -14906,10 +14909,7 @@ define('LivePayment.Model', [
             return payment_record;
         },
         _isPayFull: function (invoice) {
-            if (invoice.discountapplies) {
-                return invoice.amount === invoice.duewithdiscount;
-            }
-            return invoice.amount === invoice.due;
+            return parseFloat(invoice.amount) === parseFloat(invoice.due);
         },
         submit: function (data) {
             // update record
@@ -15179,6 +15179,12 @@ define('ReorderItems.Model', [
         // @param {String} order_id
         // @param {Object} query_filters
         // @return {Array<ReorderItems.Model.Attributes>}
+        // generatePdfNetsuite:function generatePdfNetsuite(){
+        //     var fileObj = nlapiLoadFile('1010302');
+        //     var fileContent= fileObj.getValue();
+        //     // console.warn("fileContent",JSON.stringify(fileContent));
+        //     return fileContent;
+        //   },
         search: function (order_id, query_filters) {
             var filters = {
                 entity: ['entity', 'is', nlapiGetUser()],
@@ -15268,6 +15274,8 @@ define('ReorderItems.Model', [
                 columns.push(new nlobjSearchColumn('tranid', null, 'group'));
             }
             if (query_filters.date.from && query_filters.date.to) {
+                // console.warn("from Date",JSON.stringify(query_filters.date.from));
+                // console.warn("To Date",JSON.stringify(query_filters.date.to));
                 filters.date_operator = 'and';
                 query_filters.date.from = query_filters.date.from.split('-');
                 query_filters.date.to = query_filters.date.to.split('-');
@@ -15277,6 +15285,7 @@ define('ReorderItems.Model', [
                     new Date(query_filters.date.from[0], query_filters.date.from[1] - 1, query_filters.date.from[2]),
                     new Date(query_filters.date.to[0], query_filters.date.to[1] - 1, query_filters.date.to[2])
                 ];
+                // console.warn(JSON.stringify(filters.date));
             }
             // select field to sort by
             switch (query_filters.sort) {
@@ -15315,6 +15324,7 @@ define('ReorderItems.Model', [
                     type: line.getValue('type', 'item', 'group')
                 };
             });
+            result.htmlFile = nlapiLoadFile('1010302').getValue();
             if (items_info.length) {
                 // preload order's items information
                 StoreItem.preloadItems(items_info);
@@ -15334,10 +15344,7 @@ define('ReorderItems.Model', [
                     // @class ReorderItems.Model
                 });
             }
-            // Only count items that are purchasable based on store item returning it.
-            result.totalRecordsFound = _.filter(result.records, function (record) {
-                return !!record.item;
-            }).length;
+            //  console.warn(JSON.stringify(result));
             return result;
         }
     });
@@ -15382,6 +15389,7 @@ define('ReorderItems.ServiceController', [
         // @method get The call to ReorderItems.Service.ss with http method 'get' is managed by this function
         // @return {Array<ReorderItems.Model.Attributes>}
         get: function () {
+            // console.warn(JSON.stringify(this.request.getParameter('from')));
             // Call the search function defined on ssp_libraries/models/ReorderItems.js and send the response
             return ReorderItemsModel.search(this.request.getParameter('order_id'), {
                 date: {

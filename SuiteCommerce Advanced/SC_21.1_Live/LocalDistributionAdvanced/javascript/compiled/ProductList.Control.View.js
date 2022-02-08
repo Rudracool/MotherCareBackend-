@@ -4,7 +4,7 @@
     provided, however, if you are an authorized user with a NetSuite account or log-in, you
     may use this code subject to the terms that govern your access and use.
 */
-define("ProductList.Control.View", ["require", "exports", "underscore", "product_list_control.tpl", "Utils", "jQuery", "Profile.Model", "Backbone", "Backbone.View", "ProductList.Model", "ProductList.Item.Model", "ProductList.Item.Collection", "ProductList.ControlItem.View", "ProductList.ControlNewItem.View", "Session", "Tracker"], function (require, exports, _, product_list_control_tpl, Utils, jQuery, Profile_Model_1, Backbone, BackboneView, ProductListModel, ProductListItemModel, ProductListItemCollection, ControlItemView, ControlNewItemView, Session, Tracker) {
+define("ProductList.Control.View", ["require", "exports", "underscore", "product_list_control.tpl", "Utils", "jQuery", "Profile.Model", "Backbone", "Backbone.View", "ProductList.Model", "ProductList.Item.Model", "ProductList.Item.Collection", "ProductList.ControlItem.View", "ProductList.ControlNewItem.View", "Session", "Tracker", "Product.Model"], function (require, exports, _, product_list_control_tpl, Utils, jQuery, Profile_Model_1, Backbone, BackboneView, ProductListModel, ProductListItemModel, ProductListItemCollection, ControlItemView, ControlNewItemView, Session, Tracker, ProductModel) {
     "use strict";
     return BackboneView.extend({
         template: product_list_control_tpl,
@@ -13,8 +13,10 @@ define("ProductList.Control.View", ["require", "exports", "underscore", "product
             'click [data-action="show-productlist-control"]': 'validateLogin',
             'click [data-toggle="showFlyout"]': 'showFlyout',
             'click [data-type="productlist-control"]': 'stopPropagation',
+            // 'click [data-type="change-icon"]': "settingoptions",
+            // 'click .settingoptions':'settingoptions',
             click: 'contentClick',
-            mouseup: 'contentMouseUp'
+            mouseup: 'contentMouseUp',
         },
         stopPropagation: function (event) {
             // For elements that are inside of some item lists (Ex. dropdowns),
@@ -27,6 +29,7 @@ define("ProductList.Control.View", ["require", "exports", "underscore", "product
             this.application = options.application;
             this.moveOptions = options.moveOptions;
             this.countedClicks = options.countedClicks;
+            this.model = new ProductModel();
             if (this.moveOptions) {
                 this.mode = 'move';
             }
@@ -47,6 +50,16 @@ define("ProductList.Control.View", ["require", "exports", "underscore", "product
                 }
             });
             this.product.on('change', this.render, this);
+        },
+        // @method isProductAlreadyAdded Determines if the current product with the selected options is already in the product list
+        // @return {Boolean} Indicate is the product is already added into the current single list
+        isProductAlreadyAdded: function () {
+            for (var i = 0; i < this.collection.models.length; i++) {
+                if (this.collection.at(i).checked(this.product)) {
+                    this.collection.at(i).checked(this.product);
+                    return true;
+                }
+            }
         },
         // Render the control view, appending the items views and add new list form
         render: function () {
@@ -145,6 +158,9 @@ define("ProductList.Control.View", ["require", "exports", "underscore", "product
                 else {
                     self_1.doAddItemToList(line, productList, dontShowMessage);
                 }
+            }
+            else {
+                this.doAddItemToList(line, productList, dontShowMessage);
             }
         },
         // This method is overridden in POS
@@ -270,6 +286,8 @@ define("ProductList.Control.View", ["require", "exports", "underscore", "product
             // Here no extra validation is specified as those are not required to add an item
             // into a product list
             if (this.product.areAttributesValid(['options', 'quantity'], {})) {
+                // $(".wishlist-pink").hide();
+                // $(".wishlist").show();
                 // Hide any other open flyout instances...
                 jQuery('.product-list-control-flyout').hide();
                 this.countedClicks[e.pageX + "|" + e.pageY] = false;
@@ -286,6 +304,8 @@ define("ProductList.Control.View", ["require", "exports", "underscore", "product
                     });
                 }
                 else {
+                    // $(".icontoggle").toggleClass("wishlist");
+                    // $(".icontoggle").toggleClass("wishlist-pink");
                     self_2.next().toggle();
                 }
             }
@@ -318,6 +338,9 @@ define("ProductList.Control.View", ["require", "exports", "underscore", "product
         getContext: function () {
             // @class ProductList.Control.View.Context
             return {
+                // @property {Boolean} isProductAlreadyAdded
+                isProductAlreadyAdded: this.isProductAlreadyAdded(),
+                total: this,
                 // @property {Boolean} isMoving
                 isMoving: this.mode === 'move',
                 // @property {Boolean} showControl

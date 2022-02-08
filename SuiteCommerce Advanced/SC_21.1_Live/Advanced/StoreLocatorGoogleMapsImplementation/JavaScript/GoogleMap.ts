@@ -16,6 +16,14 @@ import PromiseHandler = require('../../StoreLocatorReferenceMapImplementation/Ja
 import StoreLocatorTooltip = require('../../StoreLocator/JavaScript/StoreLocator.Tooltip.View');
 import ReferenceMap = require('../../StoreLocatorReferenceMapImplementation/JavaScript/ReferenceMap');
 
+function getMapZoom(configuration, detailPoint) {
+    let { zoom } = configuration.mapOptions();
+    if (detailPoint) {
+        zoom = configuration.zoomInDetails();
+    }
+    return zoom;
+}
+
 ReferenceMap.prototype.isInitialized = function isInitialized() {
     return typeof google === 'object' && typeof google.maps === 'object';
 };
@@ -55,20 +63,20 @@ ReferenceMap.prototype.showMap = function showMap(container) {
 
     google.maps.event.addListener(map, 'tilt_changed', () => {
         google.maps.event.addListenerOnce(map, 'idle', () => {
-            map.setZoom(this.configuration.zoomInDetails());
+            map.setZoom(getMapZoom(this.configuration, this.detail_point));
         });
 
-            if (this.points.length) {
-                this.fitBounds(map);
-            } else if (this.detail_point) {
-                this.fitBounds(map);
+        if (this.points.length) {
+            this.fitBounds(map);
+        } else if (this.detail_point) {
+            this.fitBounds(map);
 
-                map.setCenter(map.getCenter());
+            map.setCenter(map.getCenter());
 
-                map.setZoom(this.configuration.zoomInDetails());
-            } else {
-                this.centerMapToDefault(map);
-            }
+            map.setZoom(getMapZoom(this.configuration, this.detail_point));
+        } else {
+            this.centerMapToDefault(map);
+        }
 
         google.maps.event.trigger(map, 'resize');
     });
@@ -89,7 +97,7 @@ ReferenceMap.prototype.centerMapToDefault = function centerMapToDefault(map) {
 
     const map_options = this.configuration.mapOptions();
 
-    map.setZoom(map_options.zoom);
+    map.setZoom(getMapZoom(this.configuration, this.detail_point));
 
     map.setCenter(
         new google.maps.LatLng(
@@ -221,15 +229,14 @@ ReferenceMap.prototype.showMyPosition = function showMyPosition(position, map) {
     map.myPositionMarker.setVisible(true);
 
     google.maps.event.addListenerOnce(map, 'idle', () => {
-        map.setZoom(this.configuration.zoomInDetails());
+        map.setZoom(getMapZoom(this.configuration, this.detail_point));
     });
 
     if (position.viewport) {
         map.fitBounds(position.viewport);
     } else {
-        const map_options = this.configuration.mapOptions();
         map.setCenter(position.location);
-        map.setZoom(map_options.zoom);
+        map.setZoom(getMapZoom(this.configuration, this.detail_point));
     }
 
     return map.myPositionMarker;
@@ -334,7 +341,7 @@ ReferenceMap.prototype.getCityGeoCode = function getCityGeoCode() {
             promise.resolve();
         } else {
             (<any>promise).always();
-            console.warn('Geocoder failed due to: ' + status);
+            console.warn(`Geocoder failed due to: ${status}`);
         }
     });
 
@@ -348,14 +355,14 @@ ReferenceMap.prototype.zoomToPoint = function zoomToPoint(marker, map) {
         return;
     }
 
-    map.setZoom(this.configuration.zoomInDetails());
+    map.setZoom(getMapZoom(this.configuration, this.detail_point));
     map.panTo(marker.position);
 };
 
 ReferenceMap.prototype.getDirectionsUrl = function getDirectionsUrl(source, destination) {
-    const source_parameter = source ? source.latitude + ',' + source.longitude : 'Current+Location';
-    const destination_parameter =
-        (destination && destination.latitude) + ',' + (destination && destination.longitude);
+    const source_parameter = source ? `${source.latitude},${source.longitude}` : 'Current+Location';
+    const destination_parameter = `${destination && destination.latitude},${destination &&
+        destination.longitude}`;
 
-    return 'https://maps.google.com?saddr=' + source_parameter + '&daddr=' + destination_parameter;
+    return `https://maps.google.com?saddr=${source_parameter}&daddr=${destination_parameter}`;
 };

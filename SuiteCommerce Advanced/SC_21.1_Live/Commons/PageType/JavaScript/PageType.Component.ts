@@ -120,7 +120,7 @@ export = function PageTypeComponentGenerator(application) {
         _validateCurrentContext: function _validateCurrentContext(context) {
             const contextLast: any = lastContext.context;
 
-            if (contextLast.path === context.path && contextLast.page_type === context.page_type) {
+            if (contextLast.path === context.path) {
                 return lastContext;
             }
             return null;
@@ -257,7 +257,11 @@ export = function PageTypeComponentGenerator(application) {
                         }
                     });
 
-                    CMS.trigger('app:page:changed', context);
+                    const specialPageTypes = ['expired_link', 'internal-error', 'page-not-found'];
+
+                    if (specialPageTypes.indexOf(context.page_type) === -1) {
+                        CMS.trigger('app:page:changed', context);
+                    }
 
                     promiseView.done(function() {
                         data.timeoutId = setTimeout(function() {

@@ -10,6 +10,7 @@ define("LivePayment.Model", ["require", "exports", "underscore", "Utils", "jQuer
         urlRoot: 'services/LivePayment.Service.ss',
         initialize: function (attributes) {
             this.set('invoices_total', 0);
+            this.set('invoices_total_with_discount', 0);
             this.on('sync', function (model) {
                 model.set('invoices_total', 0);
             });
@@ -215,6 +216,7 @@ define("LivePayment.Model", ["require", "exports", "underscore", "Utils", "jQuer
             var payment_total = 0;
             var deposits_total = 0;
             var credits_total = 0;
+            var invoices_total_with_discount = 0;
             var self = this;
             var invoices = new InvoiceCollection(this.getSelectedInvoices().sortBy(function (invoice) {
                 return self.normalizeDate(invoice.get('duedate'));
@@ -222,9 +224,15 @@ define("LivePayment.Model", ["require", "exports", "underscore", "Utils", "jQuer
             var deposits = this.get('deposits');
             var credits = this.get('credits');
             invoices.each(function (invoice) {
-                invoices_total = new BigNumber(invoices_total)
-                    .plus(invoice.get('amount'))
-                    .toNumber();
+                var amount = invoice.get('amount');
+                if (invoice.get('discountapplies') && amount === invoice.get('due')) {
+                    amount = invoice.get('duewithdiscount');
+                    invoices_total = new BigNumber(invoices_total).plus(invoice.get('duewithdiscount')).toNumber();
+                }
+                else {
+                    invoices_total = new BigNumber(invoices_total).plus(invoice.get('amount')).toNumber();
+                }
+                invoices_total_with_discount = new BigNumber(invoices_total_with_discount).plus(amount).toNumber();
             });
             payment_total = invoices_total;
             deposits.each(function (deposit) {
@@ -241,14 +249,18 @@ define("LivePayment.Model", ["require", "exports", "underscore", "Utils", "jQuer
             });
             if (!silent) {
                 this.set('invoices_total_formatted', Utils.formatCurrency(invoices_total, this.currencySymbol));
+                this.set('invoices_total_with_discount_formatted', Utils.formatCurrency(invoices_total_with_discount, this.currencySymbol));
                 this.set('deposits_total_formatted', Utils.formatCurrency(new BigNumber(deposits_total).negated().toNumber(), this.currencySymbol));
                 this.set('credits_total_formatted', Utils.formatCurrency(new BigNumber(credits_total).negated().toNumber(), this.currencySymbol));
                 this.set('payment_formatted', Utils.formatCurrency(payment_total, this.currencySymbol));
+                this.set('payment_total_with_discount_formatted', Utils.formatCurrency(invoices_total_with_discount, this.currencySymbol));
                 this.set('currency_symbol', this.currencySymbol);
                 this.set('invoices_total', invoices_total);
+                this.set('invoices_total_with_discount', invoices_total_with_discount);
                 this.set('deposits_total', deposits_total);
                 this.set('credits_total', credits_total);
                 this.set('payment', payment_total);
+                this.set('payment_total_with_discount', invoices_total_with_discount);
                 if (this.currency) {
                     this.set('currency_id', this.currency.internalid);
                 }

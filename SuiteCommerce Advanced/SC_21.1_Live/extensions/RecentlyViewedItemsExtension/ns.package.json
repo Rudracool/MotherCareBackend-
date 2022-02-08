@@ -1,0 +1,18 @@
+{
+    "gulp": {
+        "javascript": [
+            "JavaScript/*"
+        ],
+        "templates": [
+            "Templates/*"
+        ],
+        "configuration": [
+            "Configuration/*.json"
+        ]
+    },
+    "overrides":
+    {
+        "Commons/RecentlyViewedItems/JavaScript/RecentlyViewedItems.ts":"JavaScript/RecentlyViewedItems.ts",
+        "Commons/RecentlyViewedItems/JavaScript/RecentlyViewedItems.View.ts":"JavaScript/RecentlyViewedItems.View.ts"          
+    }
+}

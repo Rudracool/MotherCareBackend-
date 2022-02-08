@@ -79,12 +79,9 @@ const PaymentWizardModuleSummary: any = WizardStepModule.extend({
             // @property {Number} selectedInvoicesLength
             selectedInvoicesLength: model.getSelectedInvoices().length,
             // @property {String} invoiceTotalFormatted
-            invoiceTotalFormatted: Utils.formatCurrency(
-                model.get('invoices_total'),
-                this.currencySymbol
-            ),
+            invoiceTotalFormatted: model.get('invoices_total_with_discount_formatted'),
             // @property {String} paymentFormatted
-            paymentFormatted: Utils.formatCurrency(model.get('payment'), this.currencySymbol),
+            paymentFormatted: model.get('payment_total_with_discount_formatted'),
             // @property {String} depositTotalFormatted
             depositTotalFormatted: Utils.formatCurrency(
                 model.get('deposits_total'),

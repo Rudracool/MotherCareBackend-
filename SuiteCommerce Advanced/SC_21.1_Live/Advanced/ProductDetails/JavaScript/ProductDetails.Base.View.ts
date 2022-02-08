@@ -235,7 +235,7 @@ const ProductDetailsBaseView: any = BackboneView.extend(
 
                         self.bindModel();
                         promise.resolve();
-                    } else if (jqXhr.status >= 500) {
+                    } else if (jqXhr.status === 200 && jqXhr.status >= 500) {
                         application.getLayout().internalError();
                         promise.reject();
                     } else if (jqXhr.responseJSON.errorCode !== 'ERR_USER_SESSION_TIMED_OUT') {
@@ -250,7 +250,7 @@ const ProductDetailsBaseView: any = BackboneView.extend(
                     // as we are taking care of it
                     jqXhr.preventDefault = true;
 
-                    if (jqXhr.status >= 500) {
+                    if (jqXhr.status === 200 && jqXhr.status >= 500) {
                         application.getLayout().internalError();
                         promise.reject();
                     } else if (jqXhr.responseJSON.errorCode !== 'ERR_USER_SESSION_TIMED_OUT') {
@@ -411,9 +411,11 @@ const ProductDetailsBaseView: any = BackboneView.extend(
             // they are not for the meta keywords
             // return this.model.get('_keywords');
             return (
-                this.getMetaTags()
+                this.metaKeywords ||
+                (this.getMetaTags()
                     .filter('[name="keywords"]')
-                    .attr('content') || ''
+                    .attr('content') ||
+                    '')
             );
         },
 
@@ -437,9 +439,11 @@ const ProductDetailsBaseView: any = BackboneView.extend(
         // @return {String}
         getMetaDescription: function getMetaDescription() {
             return (
-                this.getMetaTags()
+                this.metaDescription ||
+                (this.getMetaTags()
                     .filter('[name="description"]')
-                    .attr('content') || ''
+                    .attr('content') ||
+                    '')
             );
         },
 

@@ -31,9 +31,9 @@ const PaymentWizardModuleConfirmationSummary: any = WizardStepModule.extend({
             // @property {Number} selectedInvoicesLength
             selectedInvoicesLength: is_confirmation_created ? selectedInvoicesLength : 0,
             // @property {String} invoiceTotalFormatted
-            invoiceTotalFormatted: model.invoices_total_formatted,
+            invoiceTotalFormatted: model.invoices_total_with_discount_formatted,
             // @property {String} paymentFormatted
-            paymentFormatted: model.payment_formatted,
+            paymentFormatted: model.payment_total_with_discount_formatted,
             // @property {String} depositTotalFormatted
             depositTotalFormatted: model.deposits_total_formatted,
             // @property {Boolean} hasDeposit

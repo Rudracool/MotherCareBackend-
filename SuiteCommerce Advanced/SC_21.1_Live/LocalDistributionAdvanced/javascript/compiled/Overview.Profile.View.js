@@ -11,6 +11,7 @@ define("Overview.Profile.View", ["require", "exports", "overview_profile.tpl", "
         initialize: function () { },
         // @method getContext @returns {Overview.Banner.View.Context}
         getContext: function () {
+            // console.log(this.model);
             var first_name = this.model.get('firstname') || '';
             var middle_name = this.model.get('middlename') || '';
             var last_name = this.model.get('lastname') || '';

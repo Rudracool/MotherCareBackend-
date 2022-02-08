@@ -42,7 +42,7 @@
             "group": "storeLocator",
             "subtab": "storeLocatorGeneral",
             "type": "integer",
-            "title": "Zoom level in PDP",
+            "title": "Zoom level in specific store",
             "description": "Enter the zoom level to be applied in the map when viewing specific store details (applied in StoreLocator.Details.View.js).",
             "default": 17
         },

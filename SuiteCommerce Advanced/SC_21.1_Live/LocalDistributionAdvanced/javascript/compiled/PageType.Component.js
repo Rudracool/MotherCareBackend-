@@ -78,7 +78,7 @@ define("PageType.Component", ["require", "exports", "underscore", "Loggers", "Pa
             pageTypes: new PageType_Collection_1.PageTypeCollection((SC.ENVIRONMENT.PageTypes && SC.ENVIRONMENT.PageTypes.pageTypes) || []),
             _validateCurrentContext: function _validateCurrentContext(context) {
                 var contextLast = lastContext.context;
-                if (contextLast.path === context.path && contextLast.page_type === context.page_type) {
+                if (contextLast.path === context.path) {
                     return lastContext;
                 }
                 return null;
@@ -189,7 +189,10 @@ define("PageType.Component", ["require", "exports", "underscore", "Loggers", "Pa
                                 data.rendered = true;
                             }
                         });
-                        CMS.trigger('app:page:changed', context);
+                        var specialPageTypes = ['expired_link', 'internal-error', 'page-not-found'];
+                        if (specialPageTypes.indexOf(context.page_type) === -1) {
+                            CMS.trigger('app:page:changed', context);
+                        }
                         promiseView.done(function () {
                             data.timeoutId = setTimeout(function () {
                                 if (self._validateCurrentContext(context)) {

@@ -1,12 +1,12 @@
 {
-  "user_agent": "sc-devtools/21.1.0",
-  "authID": "demoproject",
-  "account": "TSTDRV1521025",
-  "hostname": "TSTDRV1521025.restlets.api.netsuite.com",
-  "target_folder": "185770",
-  "target_folder_ss2": {
-    "parent_id": "185668",
-    "folder_name": "Development2"
-  },
-  "product": "Advanced"
+    "user_agent": "sc-devtools/21.1.0",
+    "authID": "demoproject",
+    "account": "TSTDRV1521025",
+    "hostname": "TSTDRV1521025.restlets.api.netsuite.com",
+    "target_folder": "185770",
+    "target_folder_ss2": {
+        "parent_id": "185668",
+        "folder_name": "Development2"
+    },
+    "product": "Advanced"
 }

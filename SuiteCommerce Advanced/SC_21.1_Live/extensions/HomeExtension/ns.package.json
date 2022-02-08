@@ -1,0 +1,19 @@
+{
+    "gulp": {
+        "javascript": [
+            "JavaScript/*"
+        ],
+        "images": [
+            "Images/*"
+        ],
+        "templates": [
+            "Templates/*"
+        ],
+        "configuration": [
+            "Configuration/*.json"
+        ]
+    },
+    "overrides":{
+        "Advanced/Home/JavaScript/Home.View.ts":"JavaScript/Home.View.ts"
+    }
+}

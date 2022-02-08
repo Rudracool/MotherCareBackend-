@@ -1,0 +1,16 @@
+{
+    "gulp": {
+        "javascript": [
+            "JavaScript/*"
+        ],
+        "templates": [
+            "Templates/*"
+        ]
+    },
+    "overrides":
+    {
+        "Commons/ItemRelations/JavaScript/ItemRelations.Related.View.ts":"JavaScript/ItemRelations.Related.View.ts",
+        "Commons/ItemRelations/JavaScript/ItemRelations.RelatedItem.View.ts":"JavaScript/ItemRelations.RelatedItem.View.ts",     
+        "Commons/ItemRelations/JavaScript/ItemRelations.Correlated.View.ts":"JavaScript/ItemRelations.Correlated.View.ts"          
+    }
+}

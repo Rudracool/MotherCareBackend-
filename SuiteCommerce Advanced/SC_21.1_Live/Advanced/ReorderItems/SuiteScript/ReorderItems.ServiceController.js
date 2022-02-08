@@ -41,6 +41,7 @@ define('ReorderItems.ServiceController', [
         // @method get The call to ReorderItems.Service.ss with http method 'get' is managed by this function
         // @return {Array<ReorderItems.Model.Attributes>}
         get: function() {
+            // console.warn(JSON.stringify(this.request.getParameter('from')));
             // Call the search function defined on ssp_libraries/models/ReorderItems.js and send the response
             return ReorderItemsModel.search(this.request.getParameter('order_id'), {
                 date: {
@@ -52,5 +53,6 @@ define('ReorderItems.ServiceController', [
                 order: this.request.getParameter('order')
             });
         }
+       
     });
 });

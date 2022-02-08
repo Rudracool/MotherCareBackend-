@@ -56,7 +56,10 @@ const ReorderItemsListView: any = BackboneView.extend({
         } else {
             routerOptions = { page: 1 };
         }
-        this.options.showCurrentPage = true;
+
+        // this will always be false to be backward compatible with templates that are
+        // displaying the current page when it should not be done
+        this.options.showCurrentPage = false;
 
         if (routerOptions.order_id) {
             this.collection.order_id = routerOptions.order_id;

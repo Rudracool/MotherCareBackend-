@@ -613,8 +613,14 @@ define("Facets.Browse.View", ["require", "exports", "underscore", "facets_facet_
                 ? this.model.get('category').get('categories').length
                 : false;
             var hasItems = this.model.get('items') && this.model.get('items').length > 0;
+            // console.log(this.model.get('items').length); 
+            var currentTotalItemsPerPage = this.model.get('items').length;
+            var totalItemEnd = currentTotalItemsPerPage + this.model.options.data.offset;
+            var totalItemStart = this.model.options.data.offset + 1;
             // @class Facets.Browse.View.Context
             return {
+                totalItemStart: totalItemStart,
+                totalItemEnd: totalItemEnd,
                 // @property {Number} total
                 total: this.model.get('total'),
                 // @property {Boolean} isTotalProductsOne

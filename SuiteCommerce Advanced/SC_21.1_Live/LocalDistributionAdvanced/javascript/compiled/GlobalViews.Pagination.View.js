@@ -10,6 +10,12 @@ define("GlobalViews.Pagination.View", ["require", "exports", "underscore", "glob
     // @class GlobalViews.Pagination.View @extends Backbone.View
     exports.GlobalViewsPaginationView = BackboneView.extend({
         template: global_views_pagination_tpl,
+        events: {
+            'click .global-views-pagination-restnext-icon': 'restNextIcon',
+            'click .global-views-pagination-restprev-icon': 'restPrevIcon',
+            'click .global-views-pagination-next-number': 'nextNumber',
+            'click .global-views-pagination-prev-number': 'prevNumber'
+        },
         initialize: function () {
             // State definition
             this.current_page;
@@ -18,6 +24,7 @@ define("GlobalViews.Pagination.View", ["require", "exports", "underscore", "glob
             this.range_start = 1;
             this.range_end;
             this.show_page_list;
+            this.forward_next;
             this.precalculateValues();
         },
         // @method pager @param {String} url_value @returns {String}
@@ -82,9 +89,41 @@ define("GlobalViews.Pagination.View", ["require", "exports", "underscore", "glob
                 // @class GlobalViews.Pagination.View
             });
         },
+        restNextIcon: function () {
+            $(".global-views-pagination-next-number").animate({ speed: '0.2s', easing: 'linear' });
+            $(".global-views-pagination-next-number").toggle();
+        },
+        restPrevIcon: function () {
+            $(".global-views-pagination-prev-number").animate({ speed: '0.2s', easing: 'linear' });
+            $(".global-views-pagination-prev-number").toggle();
+        },
+        nextNumber: function () {
+            $('.global-views-pagination-restnext-icon').hide();
+        },
+        prevNumber: function () {
+            $('.global-views-pagination-restprev-icon').hide();
+        },
         // @method getContext @return {GlobalViews.Pagination.View.Content}
         getContext: function () {
             // @class GlobalViews.Pagination.View
+            var rest_of_prev = [];
+            var rest_of_next = [];
+            for (var i = 1; i < this.current_page; i++) {
+                var PrevObj = {
+                    id: i,
+                    url: this.pager(i)
+                };
+                rest_of_prev.push(PrevObj);
+            }
+            for (var x = rest_of_prev.length; x <= this.total_pages; x++) {
+                if (x > rest_of_prev.length + 1) {
+                    var NextObj = {
+                        id: x,
+                        url: this.pager(x)
+                    };
+                    rest_of_next.push(NextObj);
+                }
+            }
             return {
                 // @property {Boolean} currentPageLowerThanTotalPagesAndCurrentPageGreaterThan0AndPagesCountGreaterThan1
                 currentPageLowerThanTotalPagesAndCurrentPageGreaterThan0AndPagesCountGreaterThan1: this.total_pages >= this.current_page &&
@@ -117,7 +156,9 @@ define("GlobalViews.Pagination.View", ["require", "exports", "underscore", "glob
                 // @property {Boolean} isCurrentPageLast
                 isCurrentPageLast: this.current_page === this.total_pages,
                 // @property {Array<GlobalViews.Pagination.View.PageItem>} pages
-                pages: this.pages
+                pages: this.pages,
+                restOfPrev: rest_of_prev,
+                restOfNext: rest_of_next
             };
         }
     });

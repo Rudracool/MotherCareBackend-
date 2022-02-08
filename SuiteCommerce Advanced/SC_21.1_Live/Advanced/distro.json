@@ -23,6 +23,19 @@
         ]
     },
     "modules": [
+        "../extensions/ItemRelationsExtension",
+        "../extensions/ProductViewsExtension",
+        "../extensions/ProductListExtension",
+        "../extensions/RecentlyViewedItemsExtension",
+        "../extensions/HomeExtension",
+        "../extensions/HeaderExtension",
+        "../extensions/ReorderItemExtension",
+        "../extensions/ListHeaderExtension",
+        "../extensions/FacetsExtension",
+        "../extensions/CartExtension",
+        "../extensions/GlobalViewsext",
+        "../extensions/ProductDetailsExtension",
+        "../extensions/ProductReviewsExtension",
         "../Commons/Address",
         "../Commons/AjaxRequestsKiller",
         "../Commons/ApplicationSkeleton",
@@ -190,7 +203,9 @@
         "../../third_parties/sass.js/0.11.1-custom",
         "../../third_parties/twitter-bootstrap-sass/3.4.1",
         "../../third_parties/twitter-typeahead/0.11.1-custom",
-        "../../third_parties/underscore.js/1.10.2-custom"
+        "../../third_parties/underscore.js/1.10.2-custom",
+        "../../third_parties/jQuery-owlcarosoul/2.3.4",
+        "../../third_parties/jsPdf/1.5.3"
     ],
     "sdfScripts": [
         "gulp/ns-deploy/RestLet/NS_DeveloperTools_RL_Deployer.js",
@@ -252,7 +267,11 @@
                 "backbone.stickit": "backbone.stickit.js",
                 "js.cookie": "js.cookie.js",
                 "sass": "sass.js",
-                "bootstrap-datepicker": "bootstrap-datepicker.js"
+                "bootstrap-datepicker": "bootstrap-datepicker.js",
+                "jQuery.owl":"jquery.owl.js",
+                "jQuery.jspdf":"jquery.jspdf.js",
+                "jQuery.vfsFont":"vfs_fonts.js"
+                
             },
             "shim": {
                 "jQuery": {
@@ -264,6 +283,21 @@
                     ]
                 },
                 "jQuery.bxSlider": {
+                    "deps": [
+                        "jQuery"
+                    ]
+                },
+                "jQuery.owl": {
+                    "deps": [
+                        "jQuery"
+                    ]
+                },
+                "jQuery.jspdf": {
+                    "deps": [
+                        "jQuery"
+                    ]
+                },
+                "jQuery.vfsFont": {
                     "deps": [
                         "jQuery"
                     ]
@@ -830,7 +864,7 @@
     },
     "app_manifest": {
         "type": "SCA",
-        "version": "21.1.4",
+        "version": "21.1.6",
         "application": [
             "shopping",
             "myaccount",

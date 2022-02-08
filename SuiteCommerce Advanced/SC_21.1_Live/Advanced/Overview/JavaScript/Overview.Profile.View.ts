@@ -21,6 +21,8 @@ const OverviewProfileView: any = BackboneView.extend({
     initialize: function() {},
     // @method getContext @returns {Overview.Banner.View.Context}
     getContext: function() {
+        // console.log(this.model);
+        
         const first_name = this.model.get('firstname') || '';
         const middle_name = this.model.get('middlename') || '';
         const last_name = this.model.get('lastname') || '';

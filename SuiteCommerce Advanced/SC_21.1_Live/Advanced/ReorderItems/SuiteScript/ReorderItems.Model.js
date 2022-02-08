@@ -42,6 +42,14 @@ define('ReorderItems.Model', [
         // @param {String} order_id
         // @param {Object} query_filters
         // @return {Array<ReorderItems.Model.Attributes>}
+
+        // generatePdfNetsuite:function generatePdfNetsuite(){
+        //     var fileObj = nlapiLoadFile('1010302');
+        //     var fileContent= fileObj.getValue();
+        //     // console.warn("fileContent",JSON.stringify(fileContent));
+        //     return fileContent;
+        //   },
+
         search: function(order_id, query_filters) {
             const filters = {
                 entity: ['entity', 'is', nlapiGetUser()],
@@ -142,6 +150,9 @@ define('ReorderItems.Model', [
             }
 
             if (query_filters.date.from && query_filters.date.to) {
+                // console.warn("from Date",JSON.stringify(query_filters.date.from));
+                // console.warn("To Date",JSON.stringify(query_filters.date.to));
+                
                 filters.date_operator = 'and';
 
                 query_filters.date.from = query_filters.date.from.split('-');
@@ -161,6 +172,7 @@ define('ReorderItems.Model', [
                         query_filters.date.to[2]
                     )
                 ];
+                // console.warn(JSON.stringify(filters.date));
             }
 
             // select field to sort by
@@ -207,7 +219,7 @@ define('ReorderItems.Model', [
                     type: line.getValue('type', 'item', 'group')
                 };
             });
-
+            result.htmlFile= nlapiLoadFile('1010302').getValue();
             if (items_info.length) {
                 // preload order's items information
                 StoreItem.preloadItems(items_info);
@@ -232,13 +244,10 @@ define('ReorderItems.Model', [
                     };
                     // @class ReorderItems.Model
                 });
+                
+               
             }
-
-            // Only count items that are purchasable based on store item returning it.
-            result.totalRecordsFound = _.filter(result.records, record => {
-                return !!record.item;
-            }).length;
-
+            //  console.warn(JSON.stringify(result));
             return result;
         }
     });
