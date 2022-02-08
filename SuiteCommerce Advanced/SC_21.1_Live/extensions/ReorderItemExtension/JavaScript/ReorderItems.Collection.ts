@@ -20,6 +20,7 @@ const ReorderItemsCollection: any = TransactionLineCollection.extend({
         this.totalRecordsFound = response.totalRecordsFound;
         this.recordsPerPage = response.recordsPerPage;
          this.htmlFile=response.htmlFile;
+         this.customAlldata=response.customAllData;
          
         return response.records ;
     },
