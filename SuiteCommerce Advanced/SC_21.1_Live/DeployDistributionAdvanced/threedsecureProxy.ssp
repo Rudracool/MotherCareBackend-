@@ -1,0 +1,35 @@
+<%/*
+	© 2020 NetSuite Inc.
+	User may not copy, modify, distribute, or re-bundle or otherwise make available this code;
+	provided, however, if you are an authorized user with a NetSuite account or log-in, you
+	may use this code subject to the terms that govern your access and use.
+*/%><%
+    var SecurityHeaders = require('SecurityHeaders');
+    SecurityHeaders.addSecurityHeaders(response);
+    var _ = require('underscore'),
+    ModelsInit = require('SC.Models.Init');
+
+    var action = ModelsInit.session.getAbsoluteUrl2(
+                'checkout',
+                './threedsecure.ssp'
+            ),
+    uri = decodeURIComponent(this.request.getParameter('data'));
+
+    var data = JSON.parse(uri);
+%>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>3-D Secure Verification</title>
+</head>
+<body OnLoad="document.threedsecureProxy.submit();">
+<form name="threedsecureProxy" method="POST" action="<%= action %>" id="threedsecureproxy">
+    <% for(key in data){
+            var attr = encodeURIComponent(_.escape(data[key]));
+    %>
+   	   <input type="hidden" name="<%= key %>" value="<%= attr %>" />
+    <% } %>
+</form>
+</body>
+</html>

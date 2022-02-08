@@ -1,0 +1,22 @@
+
+{
+    "type": "object",
+    "subtab": {
+        "id": "myAccountPreferences"
+    ,	"title": "Preferences"
+    ,	"description": "Preferences"
+    ,   "group": "myAccountApp"
+    ,	"docRef": "section_161278879329",
+        "showIfAnyWebsiteScope": ["SUITE_COMMERCE_MY_ACCOUNT"]
+    },
+    "properties": {
+        "myAccountPreferences.reorderEnabled": {
+            "subtab": "myAccountPreferences",
+            "group": "myAccountApp",
+            "type": "boolean",
+            "title": "Allow user to reorder items",
+            "description": "Allows the user to reorder past purchases through SuiteCommerce MyAccount.",
+            "default": false
+        }
+    }
+}

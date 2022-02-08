@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "subtab": {
+        "id": "extLayConfig",
+        "title": "Extensions",
+        "docRef": "",
+        "description": "Extensibility Preferences",
+        "group": "advancedSettings"
+    },
+    "properties": {
+        "isSafeMode": {
+            "group": "advancedSettings",
+            "subtab": "extLayConfig",
+            "type": "boolean",
+            "title": "Extensibility Layer Safe Mode",
+            "description": "Extensibility Layer Safe Mode prevents extensions that migth break the site to load",
+            "default": false
+        }
+    }
+}
