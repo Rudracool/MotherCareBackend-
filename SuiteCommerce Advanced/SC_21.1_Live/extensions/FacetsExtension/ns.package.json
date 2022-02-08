@@ -14,6 +14,7 @@
     "overrides":{
         "Commons/Facets/JavaScript/Facets.ItemCell.View.ts":"JavaScript/Facets.ItemCell.View.ts",
         "Commons/Facets/JavaScript/Facets.Browse.CategoryHeading.View.ts": "JavaScript/Facets.Browse.CategoryHeading.View.ts",
-        "Commons/Facets/JavaScript/Facets.Browse.View.ts": "JavaScript/Facets.Browse.View.ts"
+        "Commons/Facets/JavaScript/Facets.Browse.View.ts": "JavaScript/Facets.Browse.View.ts",
+        "Commons/Facets/JavaScript/Facets.FacetedNavigation.View.ts": "JavaScript/Facets.FacetedNavigation.View.ts"
     }
 }

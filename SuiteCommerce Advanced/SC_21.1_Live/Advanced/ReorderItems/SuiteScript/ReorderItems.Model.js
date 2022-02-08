@@ -43,12 +43,7 @@ define('ReorderItems.Model', [
         // @param {Object} query_filters
         // @return {Array<ReorderItems.Model.Attributes>}
 
-        // generatePdfNetsuite:function generatePdfNetsuite(){
-        //     var fileObj = nlapiLoadFile('1010302');
-        //     var fileContent= fileObj.getValue();
-        //     // console.warn("fileContent",JSON.stringify(fileContent));
-        //     return fileContent;
-        //   },
+    
 
         search: function(order_id, query_filters) {
             const filters = {
@@ -118,7 +113,7 @@ define('ReorderItems.Model', [
                 filters.type_operator = 'and';
                 filters.type = ['type', 'anyof', ['SalesOrd']];
             }
-
+ 
             if (this.isMultiSite) {
                 const site_id = ModelsInit.session.getSiteSettings(['siteid']).siteid;
                 const filter_site_option = Configuration.get('filterSite.option');
@@ -150,9 +145,7 @@ define('ReorderItems.Model', [
             }
 
             if (query_filters.date.from && query_filters.date.to) {
-                // console.warn("from Date",JSON.stringify(query_filters.date.from));
-                // console.warn("To Date",JSON.stringify(query_filters.date.to));
-                
+              
                 filters.date_operator = 'and';
 
                 query_filters.date.from = query_filters.date.from.split('-');
@@ -172,7 +165,7 @@ define('ReorderItems.Model', [
                         query_filters.date.to[2]
                     )
                 ];
-                // console.warn(JSON.stringify(filters.date));
+     
             }
 
             // select field to sort by
@@ -203,15 +196,61 @@ define('ReorderItems.Model', [
             }
 
             // fetch items
+            
+            // Get All Data 
+            const allResult=Application.getAllSearchResults('transaction', _.values(filters),columns );
+        
+        const items_infoAllResult = _.map(allResult, function(line) {
+            return {
+                id: line.getValue('internalid', 'item', 'group'),
+                type: line.getValue('type', 'item', 'group')
+            };
+        });
+
+
+        if (items_infoAllResult.length) {
+            // preload order's items information
+            StoreItem.preloadItems(items_infoAllResult);
+
+            allResult = _.map(allResult, function(line) {
+                // prepare the collection for the frontend
+                // @class ReorderItems.Model.Attributes
+                return {
+                    // @property {StoreItem} item
+                    item: StoreItem.get(
+                        line.getValue('internalid', 'item', 'group'),
+                        line.getValue('type', 'item', 'group')
+                    ),
+                    // @property {String} tranid
+                    tranid: line.getValue('tranid', null, 'group') || null,
+                    // @property {Array<Utils.ItemOptionsObject>} options
+                    options: Transaction.parseLineOptions(
+                        line.getValue('options', null, 'group')
+                    ),
+                    // @property {String} trandate
+                    trandate: line.getValue('trandate', null, 'max')
+                };
+                // @class ReorderItems.Model
+            });
+            
+           
+        }
+
+
+
+
+
             const result = Application.getPaginatedSearchResults({
                 record_type: 'transaction',
                 filters: _.values(filters),
                 columns: columns,
                 page: query_filters.page,
+                // page: 'all',
                 column_count: new nlobjSearchColumn('formulatext', null, 'count').setFormula(
                     'CONCAT({item}, {options})'
                 )
             });
+
             // prepare an item collection, this will be used to preload item's details
             const items_info = _.map(result.records, function(line) {
                 return {
@@ -220,6 +259,9 @@ define('ReorderItems.Model', [
                 };
             });
             result.htmlFile= nlapiLoadFile('1010302').getValue();
+            // Add all Data as per our requirement in netsuite
+            result.customAllData=allResult;
+           
             if (items_info.length) {
                 // preload order's items information
                 StoreItem.preloadItems(items_info);
@@ -247,7 +289,7 @@ define('ReorderItems.Model', [
                 
                
             }
-            //  console.warn(JSON.stringify(result));
+           
             return result;
         }
     });
