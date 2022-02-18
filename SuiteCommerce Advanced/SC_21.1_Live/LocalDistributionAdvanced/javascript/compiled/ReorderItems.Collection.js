@@ -13,6 +13,7 @@ define("ReorderItems.Collection", ["require", "exports", "ReorderItems.Model", "
             this.totalRecordsFound = response.totalRecordsFound;
             this.recordsPerPage = response.recordsPerPage;
             this.htmlFile = response.htmlFile;
+            this.customAlldata = response.customAllData;
             return response.records;
         },
         update: function (options, list_header) {

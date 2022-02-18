@@ -10,7 +10,7 @@
 import * as _ from 'underscore';
 import 'bootstrap-datepicker';
 import * as list_header_view_tpl from 'list_header_view.tpl';
-import * as Utils from '../../../Commons/Utilities/JavaScript/Utils';
+import * as Utils from '../../UtilsExtension/JavaScript/Utils';
 import * as jQuery from '../../../Commons/Core/JavaScript/jQuery';
 import { Configuration } from '../../../Commons/Utilities/JavaScript/Configuration';
 import { GlobalViewsPaginationView } from '../../../Commons/GlobalViews/JavaScript/GlobalViews.Pagination.View';

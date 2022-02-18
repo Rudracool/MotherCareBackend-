@@ -807,8 +807,6 @@ export = BackboneView.extend({
             ? this.model.get('category').get('categories').length
             : false;
         const hasItems = this.model.get('items') && this.model.get('items').length > 0;
-        
-            // console.log(this.model.get('items').length); 
             const currentTotalItemsPerPage=this.model.get('items').length;
             const totalItemEnd =currentTotalItemsPerPage +this.model.options.data.offset;
             const totalItemStart = this.model.options.data.offset+1;

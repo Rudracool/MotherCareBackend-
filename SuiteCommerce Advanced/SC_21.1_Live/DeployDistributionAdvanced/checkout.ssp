@@ -158,7 +158,7 @@
 			   for(var i=0; i < css_files.length; i++)
 			   {
 			%>
-					<link rel="stylesheet" href="<%= session.getAbsoluteUrl2(css_files[i]) %>?t=1644327595437">
+					<link rel="stylesheet" href="<%= session.getAbsoluteUrl2(css_files[i]) %>?t=1644934158110">
 			<%
 			   }
 			%>
@@ -192,7 +192,7 @@
 			var translationUrl = '<%= hasTranslations ? session.getAbsoluteUrl2(app_includes.checkout.translations[Language]) : '' %>';
 			var coreLanguageUrl = '<%= isCoreLanguage ? session.getAbsoluteUrl2("languages") : '' %>';
 
-function Deferred(){this.status="started",this.data=void 0,this.doneCb=[]}function loadJSON(e,o){window.loadedResourcesPromises=window.loadedResourcesPromises||{};var n=new Deferred;window.loadedResourcesPromises[o]=n;var r=new XMLHttpRequest;return r.open("GET",e),r.onreadystatechange=function(){4===r.readyState&&200===r.status&&n.resolve(JSON.parse(r.responseText))},r.send(null),n}function loadScript(e){window.loadedResourcesPromises=window.loadedResourcesPromises||{};var o=window.loadedResourcesPromises[e]=new Deferred,n=document.createElement("script");function r(){o.resolve()}return n.src=e,n.onerror=r,n.onload=r,document.head.appendChild(n),o}function isObject(e){return e&&"object"==typeof e&&!Array.isArray(e)}function merge(e,o){if(isObject(e)&&isObject(o))for(var n,r=Object.keys(o),s=0;s<r.length;s++)!isObject(o[n=r[s]])||void 0===e[n]?e[n]=o[n]:merge(e[n],o[n]);return e}function _each(e,o){for(var n=0;n<e.length;n++)o(e[n],n)}Deferred.prototype.done=function(e){"resolved"===this.status?e(this.data):this.doneCb.push(e)},Deferred.prototype.resolve=function(e){this.data=e,this.status="resolved";for(var o=0;o<this.doneCb.length;o++)this.doneCb[o](this.data);return this},Deferred.all=function(e){for(var o=Object.keys(e),n=0,r=new Deferred,s=0;s<o.length;s++)e[o[s]].done(function(){++n===o.length&&r.resolve()});return r};var SC=window.SC={ENVIRONMENT:{jsEnvironment:"undefined"==typeof nsglobal?"browser":"server"},isCrossOrigin:function(){return"<%= Environment.currentHostString %>"!==document.location.hostname},isPageGenerator:function(){return"undefined"!=typeof nsglobal},getSessionInfo:function(e){var o=SC.SESSION||SC.DEFAULT_SESSION||{};return e?o[e]:o},getPublishedObject:function(e){return SC.ENVIRONMENT&&SC.ENVIRONMENT.published&&SC.ENVIRONMENT.published[e]?SC.ENVIRONMENT.published[e]:null}};window.loadedResourcesPromises=window.loadedResourcesPromises||{},translationUrl&&(window.loadedResourcesPromises.extensionLanguagePromise=new Deferred),coreLanguageUrl&&(window.loadedResourcesPromises.languagePromise=new Deferred),loadJSON('<%= session.getAbsoluteUrl2("services/CheckoutEnvironment.Service.ss?" + environmentParameters.join("&") ) %>'+googletagmanager_cookie+"&t=1644327595437","checkoutEnvironment").done(function(e){merge(SC,e),SC.ENVIRONMENT.isTouchEnabled="ontouchstart"in window||window.DocumentTouch&&document instanceof DocumentTouch,document.documentElement.className=SC.ENVIRONMENT.isTouchEnabled?"touch":"no-touch",translationUrl&&loadScript(translationUrl+"?t=1644327595437").done(function(){window.loadedResourcesPromises.extensionLanguagePromise.resolve()}),coreLanguageUrl&&loadScript(coreLanguageUrl+"/checkout_"+SC.ENVIRONMENT.currentLanguage.locale+".js?t=1644327595437").done(function(){window.loadedResourcesPromises.languagePromise.resolve()})}),SC.extensionModules=[],SC.addExtensionModule=function(e){SC.extensionModules.push(e)};		</script>
+function Deferred(){this.status="started",this.data=void 0,this.doneCb=[]}function loadJSON(e,o){window.loadedResourcesPromises=window.loadedResourcesPromises||{};var n=new Deferred;window.loadedResourcesPromises[o]=n;var r=new XMLHttpRequest;return r.open("GET",e),r.onreadystatechange=function(){4===r.readyState&&200===r.status&&n.resolve(JSON.parse(r.responseText))},r.send(null),n}function loadScript(e){window.loadedResourcesPromises=window.loadedResourcesPromises||{};var o=window.loadedResourcesPromises[e]=new Deferred,n=document.createElement("script");function r(){o.resolve()}return n.src=e,n.onerror=r,n.onload=r,document.head.appendChild(n),o}function isObject(e){return e&&"object"==typeof e&&!Array.isArray(e)}function merge(e,o){if(isObject(e)&&isObject(o))for(var n,r=Object.keys(o),s=0;s<r.length;s++)!isObject(o[n=r[s]])||void 0===e[n]?e[n]=o[n]:merge(e[n],o[n]);return e}function _each(e,o){for(var n=0;n<e.length;n++)o(e[n],n)}Deferred.prototype.done=function(e){"resolved"===this.status?e(this.data):this.doneCb.push(e)},Deferred.prototype.resolve=function(e){this.data=e,this.status="resolved";for(var o=0;o<this.doneCb.length;o++)this.doneCb[o](this.data);return this},Deferred.all=function(e){for(var o=Object.keys(e),n=0,r=new Deferred,s=0;s<o.length;s++)e[o[s]].done(function(){++n===o.length&&r.resolve()});return r};var SC=window.SC={ENVIRONMENT:{jsEnvironment:"undefined"==typeof nsglobal?"browser":"server"},isCrossOrigin:function(){return"<%= Environment.currentHostString %>"!==document.location.hostname},isPageGenerator:function(){return"undefined"!=typeof nsglobal},getSessionInfo:function(e){var o=SC.SESSION||SC.DEFAULT_SESSION||{};return e?o[e]:o},getPublishedObject:function(e){return SC.ENVIRONMENT&&SC.ENVIRONMENT.published&&SC.ENVIRONMENT.published[e]?SC.ENVIRONMENT.published[e]:null}};window.loadedResourcesPromises=window.loadedResourcesPromises||{},translationUrl&&(window.loadedResourcesPromises.extensionLanguagePromise=new Deferred),coreLanguageUrl&&(window.loadedResourcesPromises.languagePromise=new Deferred),loadJSON('<%= session.getAbsoluteUrl2("services/CheckoutEnvironment.Service.ss?" + environmentParameters.join("&") ) %>'+googletagmanager_cookie+"&t=1644934158110","checkoutEnvironment").done(function(e){merge(SC,e),SC.ENVIRONMENT.isTouchEnabled="ontouchstart"in window||window.DocumentTouch&&document instanceof DocumentTouch,document.documentElement.className=SC.ENVIRONMENT.isTouchEnabled?"touch":"no-touch",translationUrl&&loadScript(translationUrl+"?t=1644934158110").done(function(){window.loadedResourcesPromises.extensionLanguagePromise.resolve()}),coreLanguageUrl&&loadScript(coreLanguageUrl+"/checkout_"+SC.ENVIRONMENT.currentLanguage.locale+".js?t=1644934158110").done(function(){window.loadedResourcesPromises.languagePromise.resolve()})}),SC.extensionModules=[],SC.addExtensionModule=function(e){SC.extensionModules.push(e)};		</script>
 	</head>
 	<body>
 		<noscript>
@@ -212,8 +212,8 @@ function Deferred(){this.status="started",this.data=void 0,this.doneCb=[]}functi
 
 		<div id="main" class="main"></div>
 
-		<script src="<%= session.getAbsoluteUrl2('checkout.environment.shortcache.ssp?X-SC-Touchpoint=checkout') %>&t=1644327595437"></script>
-		<script src="<%= session.getAbsoluteUrl2('customFieldsMetadata.ssp?')%>t=1644327595437"></script>
+		<script src="<%= session.getAbsoluteUrl2('checkout.environment.shortcache.ssp?X-SC-Touchpoint=checkout') %>&t=1644934158110"></script>
+		<script src="<%= session.getAbsoluteUrl2('customFieldsMetadata.ssp?')%>t=1644934158110"></script>
 
 		<%
 		var Configuration = require('Configuration');
@@ -254,7 +254,7 @@ function Deferred(){this.status="started",this.data=void 0,this.doneCb=[]}functi
 		   for(var i=0; i < js_files.length; i++)
 		   {
 		%>
-				<script src="<%= session.getAbsoluteUrl2(js_files[i]) %>?t=1644327595437"></script>
+				<script src="<%= session.getAbsoluteUrl2(js_files[i]) %>?t=1644934158110"></script>
 		<%
 		   }
 		%>

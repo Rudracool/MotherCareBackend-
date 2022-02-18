@@ -181,10 +181,8 @@ export = BackboneView.extend({
                     wishlistArry.push(data);
                     self.productlists = data;                    
              }
-            // console.log(data);
         })
-        // console.log(self.productlists,"Arry");
-        
+       
         const environment = SC.ENVIRONMENT;
         const isLoggedIn = ProfileModel.getInstance().get('isLoggedIn') === 'T';
         const show_languages = !!(

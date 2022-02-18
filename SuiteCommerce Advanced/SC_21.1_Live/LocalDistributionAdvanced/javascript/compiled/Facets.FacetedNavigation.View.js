@@ -23,6 +23,7 @@ define("Facets.FacetedNavigation.View", ["require", "exports", "underscore", "fa
         childViews: {
             'Facets.FacetedNavigationItems': function () {
                 var translator = this.options.translator; // FacetsHelper.parseUrl(this.options.translatorUrl, this.options.translatorConfig, this.options.translator.categoryUrl)
+                var facetsApplied = this.options.appliedFacets;
                 var ordered_facets = this.options.facets &&
                     this.options.facets.sort(function (a, b) {
                         // Default Priority is 0
@@ -41,7 +42,8 @@ define("Facets.FacetedNavigation.View", ["require", "exports", "underscore", "fa
                     viewsPerRow: 1,
                     collection: new Backbone.Collection(ordered_facets),
                     childViewOptions: {
-                        translator: translator
+                        translator: translator,
+                        facetsApplied: this.options.appliedFacets
                     }
                 });
             }
@@ -49,7 +51,6 @@ define("Facets.FacetedNavigation.View", ["require", "exports", "underscore", "fa
         // @method getContext
         // @returns {Facets.FacetedNavigation.View.Context}
         getContext: function () {
-            // @class Facets.FacetedNavigation.View.Context
             return {
                 // @property {Number} totalProducts
                 totalProducts: this.totalProducts,
@@ -71,6 +72,9 @@ define("Facets.FacetedNavigation.View", ["require", "exports", "underscore", "fa
                 hasCategoriesAndFacets: this.hasCategoriesAndFacets,
                 // @property {Array} appliedFacets
                 appliedFacets: this.appliedFacets,
+                //  {Boolean} hasAppliedFacets,
+                appliedFacetsLength: this.appliedFacets.length,
+                // categorySelected:categorySelected,
                 // @property {Boolean} hasAppliedFacets
                 hasAppliedFacets: this.appliedFacets && this.appliedFacets.length > 0,
                 // @property {Array} hasFacetsOrAppliedFacets

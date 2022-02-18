@@ -36,6 +36,7 @@
         "../extensions/GlobalViewsext",
         "../extensions/ProductDetailsExtension",
         "../extensions/ProductReviewsExtension",
+        "../extensions/UtilsExtension",
         "../Commons/Address",
         "../Commons/AjaxRequestsKiller",
         "../Commons/ApplicationSkeleton",
