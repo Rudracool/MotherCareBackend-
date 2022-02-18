@@ -52,17 +52,17 @@ const ReorderItemsListView: any = BackboneView.extend({
     },
     // @method initialize
     initialize: function(options) {
-
          this.customModel=new ReorderItemCustomModel();//custom model
         this.application = options.application;
         this.collection = new ReorderItemsCollection();
         let routerOptions;
+        
         if (options.routerArguments && options.routerArguments[0]) {
             routerOptions = Utils.parseUrlOptions(options.routerArguments[0]);
         } else {
             routerOptions = { page: 1 };
         }
-        
+
         // this will always be false to be backward compatible with templates that are
         // displaying the current page when it should not be done
         this.options.showCurrentPage = false;
@@ -108,6 +108,7 @@ const ReorderItemsListView: any = BackboneView.extend({
         this.collection.on('reset', this.render, this);
         
     },
+    
     
   
 
@@ -398,10 +399,6 @@ const ReorderItemsListView: any = BackboneView.extend({
     },
     // @method getContext: function()
     getContext: function() {
-       
-    
-       
-
 
         // @class ReorderItems.List.View.Context
         return {

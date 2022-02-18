@@ -22,7 +22,7 @@ export = BackboneView.extend({
     template: facets_faceted_navigation_tpl,
 
     initialize: function(options) {
-        console.log(options,"options");
+        
         
         this.categoryItemId = options.categoryItemId;
         this.clearAllFacetsLink = options.clearAllFacetsLink;
@@ -40,6 +40,7 @@ export = BackboneView.extend({
     childViews: {
         'Facets.FacetedNavigationItems': function() {
             const { translator } = this.options; // FacetsHelper.parseUrl(this.options.translatorUrl, this.options.translatorConfig, this.options.translator.categoryUrl)
+            let facetsApplied = this.options.appliedFacets;
             let ordered_facets =
                 this.options.facets &&
                 this.options.facets.sort(function(a, b) {
@@ -58,22 +59,26 @@ export = BackboneView.extend({
                     return _.indexOf(hidden_facet_names, item.id) >= 0;
                 });
             }
-
+                
             return new BackboneCollectionView({
                 childView: FacetsFacetedNavigationItemView,
                 viewsPerRow: 1,
                 collection: new Backbone.Collection(ordered_facets),
                 childViewOptions: {
-                    translator: translator
+                    translator: translator,
+                    facetsApplied:this.options.appliedFacets 
+                    
                 }
             });
         }
     },
-
+    
+    
     // @method getContext
     // @returns {Facets.FacetedNavigation.View.Context}
     getContext: function() {
-        // @class Facets.FacetedNavigation.View.Context
+
+        
         return {
             // @property {Number} totalProducts
             totalProducts: this.totalProducts,
@@ -97,6 +102,7 @@ export = BackboneView.extend({
             appliedFacets: this.appliedFacets,
             //  {Boolean} hasAppliedFacets,
             appliedFacetsLength:this.appliedFacets.length,
+            // categorySelected:categorySelected,
             // @property {Boolean} hasAppliedFacets
             hasAppliedFacets: this.appliedFacets && this.appliedFacets.length > 0,
             // @property {Array} hasFacetsOrAppliedFacets

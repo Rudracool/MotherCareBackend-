@@ -11,9 +11,9 @@ define("Facets.FacetedNavigationItem.View", ["require", "exports", "underscore",
         events: {
             'click [data-action="see-more"]': 'toggleSeeMoreLess',
             'slide div[data-toggle="slider"]': 'updateRangeValues',
-            'stop div[data-toggle="slider"]': 'updateRangeSelection'
+            'stop div[data-toggle="slider"]': 'updateRangeSelection',
         },
-        initialize: function () {
+        initialize: function (options) {
             this.facetId = this.model.get('url') || this.model.get('id');
             this.facet_config = this.options.translator.getFacetConfig(this.facetId);
             // this values is configured in the Configuration File (SCA.Shopping.Configuration)
@@ -103,6 +103,14 @@ define("Facets.FacetedNavigationItem.View", ["require", "exports", "underscore",
         },
         // @method getContext @return {Facets.FacetedNavigationItem.View.Context}
         getContext: function () {
+            var FacetId = this.facetId;
+            var lenArry = [];
+            $.each(this.options.facetsApplied, function () {
+                if (this.id == FacetId) {
+                    var Selected = this.value.length;
+                    lenArry.push(Selected);
+                }
+            });
             var facet_id = this.facetId;
             var translator = this.options.translator;
             var facet_config = this.facet_config;
@@ -183,8 +191,13 @@ define("Facets.FacetedNavigationItem.View", ["require", "exports", "underscore",
                     ? facet_config.parser(range_from, false)
                     : range_from;
             }
+            if (lenArry !== undefined && lenArry.length > 0) {
+                this.val = lenArry;
+            }
             // @class Facets.FacetedNavigationItem.View.Context
             var context = {
+                // @property {array} facetselected length
+                selectedFacetLength: !_.isUndefined(this.val) ? this.val[0] : false,
                 // @property {String} htmlId
                 htmlId: _.uniqueId('facetList_'),
                 // @property {String} facetId

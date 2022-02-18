@@ -140,6 +140,7 @@ define("Cart.AddToCart.Button.View", ["require", "exports", "underscore", "cart_
         // @method getContext
         // @return {Cart.AddToCart.Button.View.Context}
         getContext: function getContext() {
+            console.log("hello");
             // @class Cart.AddToCart.Button.View.Context
             return {
                 // @property {Boolean} isCurrentItemPurchasable

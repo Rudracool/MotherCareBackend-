@@ -38,6 +38,28 @@ export = BackboneView.extend({
         if (options.template) {
             this.template = options.template;
         }
+        var self = this;
+
+        if(this.model.get("itemoptions_detail") && !_.isUndefined(this.model.get("itemoptions_detail").fields)){
+        self.hasMatrixoptions = true;
+        }else{
+        self.hasMatrixoptions = false;
+        }
+
+        if(!_.isUndefined(this.model.get("itemoptions_detail"))){
+        this.product = new ProductModel({
+        item: this.model,
+        quantity: this.model.get('_minimumQuantity', true)
+        });
+
+        _.each(this.model.get("itemoptions_detail").fields,function(custom:any){
+
+        if(custom.ismandatory && !_.isUndefined(custom.values) && custom.values.length > 0 &&  !_.isUndefined(custom.values[0].internalid )){
+        self.product.setOption(custom.internalid, custom.values[0].internalid)
+        }
+        })
+        self.model = self.product.get('item')
+        }
     },
     events:{
         'click [data-action="changethumbnail"]' : 'thumbnailchange'
@@ -97,19 +119,25 @@ export = BackboneView.extend({
             application: this.options.application, //this.options.application
         });
     },
-    'WishList': function() {  
-        const product = new ProductModel({
-            item: this.model,
-            quantity: this.model.get('_minimumQuantity', true)
-        });
-
-        return new ProductDetailsAddToProductListView({
-            model: product,
-            application: this.options.application, //this.options.application
-        });
-
-    },
-        'GlobalViews.StarRating': function() {
+    "WishList": function() {  
+        if(this.hasMatrixoptions == false){
+                    const product = new ProductModel({
+                        item: this.model,
+                        quantity: this.model.get('_minimumQuantity', true)
+                        
+                    });
+                    return new ProductDetailsAddToProductListView({
+                        model: product,
+                        application: this.options.application, //this.options.application
+                    });
+                }else if(this.hasMatrixoptions == true){
+                    return new ProductDetailsAddToProductListView({
+                        model: this.product,
+                        application: this.options.application
+                    });
+                }
+                }, 
+          'GlobalViews.StarRating': function() {
             const view = new GlobalViewsStarRating({
                 model: this.model,
                 showRatingCount: false,
@@ -171,7 +199,6 @@ export = BackboneView.extend({
             // @class ProductDetails.QuickView.View
         },
     getContext: function() {
-                //  console.log(this.model.get('itemoptions_detail'),"anil");
                  
         return {
             // @property {String} itemId

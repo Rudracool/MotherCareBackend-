@@ -267,6 +267,7 @@ define("Utils", ["require", "exports", "underscore", "String.format", "jQuery", 
             return '';
         }
         // Turns the arguments object into an array
+        // let parameters: (string | number)[] = [];
         var parameters = [];
         // Checks the translation table
         var result = SC.Translations && SC.Translations[text] ? SC.Translations[text] : text;
@@ -2026,84 +2027,7 @@ define("Utils", ["require", "exports", "underscore", "String.format", "jQuery", 
         return result;
     }
     exports.htmlToPdfMake = htmlToPdfMake;
-    //  export function createPDF(data1:any,heading1:any,firstName:any,lastName:any,DateFormat:any,SumTotalPrice:any) {
     function createPDF(HtmlData) {
-        // const reducer = (accumulator, curr) => accumulator + curr;
-        // var totalPriceAddition=SumTotalPrice.reduce(reducer);
-        // var Customername=firstName +" " +lastName;
-        //   var heeadingText=`<h1 style="text-align:center">${heading1}</h1>`;
-        //   var title=`<title>${heading1}</title>`
-        //   var headdingRows=(<any>Object).keys(data1[0]);
-        //   // adding heading content
-        //   var theadRow='<tr>'
-        //   theadRow +=' <th class="no">#</th>';
-        //   for(let i=0;i<headdingRows.length;i++){
-        //     theadRow += `<th class="heading_0${i+1}"> ${headdingRows[i]}</th>`;
-        //   }
-        //   theadRow += '</tr>';
-        //   var tr = '<tr class="bodySec">' ;
-        //   // data1.map(value =>{
-        //     _.map(data1,function(value:any,keys:number){
-        //         const k = Object.keys(value);
-        //         tr +=`<td class="no">${keys+1} </td>`
-        //           for (const key in value) {
-        //             tr += `<td class="heading_0" align="center"> ${value[key]}</td>`;
-        //           }
-        //         tr +='</tr>';
-        //       })
-        var style = "<style>@font-face {\n    font-family: SourceSansPro;\n    src: url(SourceSansPro-Regular.ttf);\n  }\n  \n  .clearfix:after {\n    content: \"\";\n    display: table;\n    clear: both;\n  }\n  \n  a {\n    color: #0087C3;\n    text-decoration: none;\n  }\n  \n  body {\n    position: relative;\n    width: 21cm;   \n    margin: 0 auto; \n    color: #555555;\n    background: #FFFFFF; \n    font-size: 14px; \n\n  }\n  \n  header {\n    padding: 10px 0;\n    margin-bottom: 20px;\n    border-bottom: 1px solid #AAAAAA;\n  }\n  \n  #logo {\n    float: left;\n    margin-top: 8px;\n  }\n  \n  #logo img {\n    height: 70px;\n  }\n  \n  #company {\n    float: right;\n    text-align: right;\n  }\n  \n  \n  #details {\n    margin-bottom: 50px;\n  }\n  \n  #client {\n    padding-left: 6px;\n    border-left: 6px solid #0087C3;\n    float: left;\n  }\n  \n  #client .to {\n    color: #777777;\n  }\n  \n  h2.name {\n    font-size: 1.4em;\n    font-weight: normal;\n    margin: 0;\n  }\n  \n  #invoice {\n    float: right;\n    text-align: right;\n  }\n  \n  #invoice h1 {\n    color: #0087C3;\n    font-size: 2.4em;\n    line-height: 1em;\n    font-weight: normal;\n    margin: 0  0 10px 0;\n  }\n  \n  #invoice .date {\n    font-size: 1.1em;\n    color: #777777;\n  }\n  \n  table {\n    width: 100%;\n    border-collapse: collapse;\n    border-spacing: 0;\n    margin-bottom: 20px;\n  }\n  \n  table th,\n  table td {\n    padding: 20px;\n    background: #EEEEEE;\n    text-align: center;\n    border-bottom: 1px solid #FFFFFF;\n  }\n  \n  table th {\n    white-space: nowrap;        \n    font-weight: normal;\n  }\n  \n  table td {\n    text-align: center;\n  }\n  \n  table td h3{\n    color: #57B223;\n    font-size: 1.2em;\n    font-weight: normal;\n    margin: 0 0 0.2em 0;\n  }\n  \n  table .no {\n    color: #FFFFFF;\n    font-size: 1.6em;\n    background: #57B223;\n  }\n  \n  table .heading_01 {\n    text-align: center;\n  }\n  \n  table .heading_02 {\n    background: #DDDDDD;\n    text-align:center;\n  }\n  \n  table .qty {\n  }\n  \n  table .heading_03 {\n    background: #57B223;\n    color: #FFFFFF;\n    text-align:center;\n  }\n  \n  table td {\n    font-size: 1.2em;\n  }\n  \n  table tbody tr:last-child td {\n    border: none;\n  }\n  \n  table tfoot td {\n    padding: 10px 20px;\n    background: #FFFFFF;\n    border-bottom: none;\n    font-size: 1.2em;\n    white-space: nowrap; \n    border-top: 1px solid #AAAAAA; \n  }\n  \n  table tfoot tr:first-child td {\n    border-top: none; \n  }\n  \n  table tfoot tr:last-child td {\n    color: #57B223;\n    font-size: 1.4em;\n    border-top: 1px solid #57B223; \n  \n  }\n  \n  table tfoot tr td:first-child {\n    border: none;\n  }\n  \n  #thanks{\n    font-size: 2em;\n    margin-bottom: 50px;\n  }\n  \n  #notices{\n    padding-left: 6px;\n    border-left: 6px solid #0087C3;  \n  }\n  \n  #notices .notice {\n    font-size: 1.2em;\n  }\n  \n  .footer {\n    color: #777777;\n    width: 100%;\n    height: 30px;\n    \n    border-top: 1px solid #AAAAAA;\n    padding: 8px 0;\n    text-align: center;\n    margin-top:50px;\n  }\n  </style>\n  \n  ";
-        //     var customizedTemplate =`<html><head>
-        //     <title>${heading1}</title>
-        //     ${style}
-        //     </head><body>
-        //     <header class="clearfix">
-        //     <div id="logo">
-        //       <img src="http://demo.cloudalp.com/PdfLogo/CAlogo.png">
-        //     </div>
-        //     <div id="company">
-        //       <h2 class="name">Demo CloudAlp Shopping</h2>
-        //       <div><a href="mailto:info@cloudalp.com">info@cloudalp.com</a></div>
-        //     </div>
-        //     </div>
-        //   </header>
-        //   <main>
-        //   <div id="details" class="clearfix">
-        //     <div id="client">
-        //       <div class="to">Customer Details:</div>
-        //       <h2 class="name">${Customername}</h2>
-        //       <div class="email"><a href="mailto:john@example.com">john@example.com</a></div>
-        //     </div>
-        //     <div id="invoice">
-        //       <h1>${heading1}</h1>
-        //       <div class="date">Date From: ${DateFormat.fromDate}</div>
-        //       <div class="date">To: ${DateFormat.toDate}</div>
-        //     </div>
-        //   </div>
-        //   <table border="0" cellspacing="0" cellpadding="0">
-        //     <thead>
-        //      ${theadRow}
-        //     </thead>
-        //     <tbody>
-        //      ${tr}
-        //     </tbody>
-        //     <tfoot>
-        //       <tr>
-        //         <td ></td>
-        //         <td colspan="2" style="text-align: right;">SUBTOTAL</td>
-        //         <td>$${totalPriceAddition}.00</td>
-        //       </tr>
-        //     </tfoot>
-        //   </table>
-        //   <div id="thanks">Thank you!</div>
-        //   <div id="notices">
-        //     <div>NOTICE:</div>
-        //     <div class="notice">A finance charge of 1.5% will be made on unpaid balances after 30 days.</div>
-        //   </div>
-        // </main>
-        // <div class="footer">
-        //   Invoice was created on a computer and is valid without the signature and seal.
-        // </div>
-        // </body></html>`
         var iframe = document.createElement('iframe');
         iframe.style.visibility = "hidden";
         iframe.setAttribute("style", "height:100%;width:100%; display:none;");
@@ -2113,11 +2037,6 @@ define("Utils", ["require", "exports", "underscore", "String.format", "jQuery", 
         // Add the IFrame to the web page.
         iframe.contentWindow.focus();
         iframe.contentWindow.print(); // Print.
-        // var any=customizedTemplate;
-        //  var win = window.open('', '', 'height=700,width=700');
-        //   win.document.write(customizedTemplate);         // THE TABLE CONTENTS INSIDE THE BODY TAG.
-        //   win.document.close(); 	// CLOSE THE CURRENT WINDOW.
-        //   win.print();    // PRINT THE CONTENTS
     }
     exports.createPDF = createPDF;
     // end custom

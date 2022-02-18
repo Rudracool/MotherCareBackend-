@@ -50,7 +50,8 @@ define("ItemRelations.Related.View", ["require", "exports", "underscore", "item_
                         .css('minHeight', img_min_height);
                 }
                 var itemspage = {
-                    pager: true
+                    pager: true,
+                    touchEnabled: false
                 };
                 Utils.initBxSlider(carousel, _.extend(Configuration_1.Configuration.get('bxSliderDefaults', {}), itemspage));
             }

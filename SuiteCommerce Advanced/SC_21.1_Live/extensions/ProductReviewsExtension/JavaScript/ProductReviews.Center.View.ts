@@ -83,8 +83,8 @@ export = BackboneView.extend({
             });
     },
     reviewsbtn:function(){
-        console.log("data-toggle")
         $(".product-reviews-center-review-container").toggleClass("reveal-open");
+        $(".see-more-reviews-btn").html() == " see more reviews " ? $(".see-more-reviews-btn").html('show less') : $(".see-more-reviews-btn").html(" see more reviews ");
     },
 
     render: function render(): void {

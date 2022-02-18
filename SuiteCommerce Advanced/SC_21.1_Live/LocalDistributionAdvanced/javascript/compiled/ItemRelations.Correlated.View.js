@@ -50,7 +50,7 @@ define("ItemRelations.Correlated.View", ["require", "exports", "underscore", "it
                         .find('.item-relations-related-item-thumbnail')
                         .css('minHeight', img_min_height);
                 }
-                Utils.initBxSlider(carousel, bxSliderDefaults);
+                Utils.initBxSlider(carousel, _.extend(bxSliderDefaults, { touchEnabled: false }));
             }
         },
         loadRelatedItems: function loadRelatedItems() {

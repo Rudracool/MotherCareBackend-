@@ -37,6 +37,26 @@ const ItemRelationsRelatedItemView = BackboneView.extend({
     // @return {Void}
     initialize: function(options) {
         BackboneView.prototype.initialize.apply(this, arguments);
+        var self = this;
+        if(this.model.get("itemoptions_detail") && !_.isUndefined(this.model.get("itemoptions_detail").fields)){
+        self.hasMatrixoptions = true;
+        }else{
+        self.hasMatrixoptions = false;
+        }
+        if(!_.isUndefined(this.model.get("itemoptions_detail"))){
+        this.product = new ProductModel({
+        item: this.model,
+        quantity: this.model.get('_minimumQuantity', true)
+        });
+
+        _.each(this.model.getPosibleOptions().models,function(options:any){
+
+        if(options.get('isMandatory') && !_.isUndefined(options.get('values')) && options.get('values').length > 0 &&  !_.isUndefined(options.get('values')[0].internalid )){
+        self.product.setOption(options.get('cartOptionId'), options.get('values')[0].internalid)
+        }
+        })
+        self.model = self.product.get('item')   
+        }
 
     },
     events:{
@@ -107,7 +127,7 @@ const ItemRelationsRelatedItemView = BackboneView.extend({
                         this.itemwithoptions = true;
                     }
                     } catch (error) {
-                        // console.log('error', error)
+                        console.log('error', error)
                     }
             return new CartAddToCartButtonView({
                 model: product,
@@ -131,16 +151,23 @@ const ItemRelationsRelatedItemView = BackboneView.extend({
         
 
         AddToProductList: function() {  
-            const product = new ProductModel({
-                item: this.model,
-                quantity: this.model.get('_minimumQuantity', true)
-                
-            });
-            return new ProductDetailsAddToProductListView({
-                model: product,
-                application: this.parentView.options.application, //this.options.application
-            });
-        },
+            if(this.hasMatrixoptions == false){
+                        const product = new ProductModel({
+                            item: this.model,
+                            quantity: this.model.get('_minimumQuantity', true)
+                            
+                        });
+                        return new ProductDetailsAddToProductListView({
+                            model: product,
+                            application: this.parentView.options.application,
+                        });
+                    }else if(this.hasMatrixoptions == true){
+                        return new ProductDetailsAddToProductListView({
+                            model: this.product,
+                            application: this.parentView.options.application
+                        });
+                    }
+                },
 
         'Item.Price': function() {
             return new ProductViewsPriceView({
