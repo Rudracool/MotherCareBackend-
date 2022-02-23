@@ -207,13 +207,13 @@ var SC = window.SC = {
 
 			SC.isDevelopment = true;
 
-			loadJSON('<%= session.getAbsoluteUrl2("services/MyAccountEnvironment.Service.ss?" + environmentParameters.join("&") ) %>&t=1644934158110', 'myAccountEnvironment')
+			loadJSON('<%= session.getAbsoluteUrl2("services/MyAccountEnvironment.Service.ss?" + environmentParameters.join("&") ) %>&t=1645183687914', 'myAccountEnvironment')
 			.done(function(env){
 				merge(SC, env);
 				SC.ENVIRONMENT.isTouchEnabled = ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch;
 				document.documentElement.className = (SC.ENVIRONMENT.isTouchEnabled) ? 'touch' : 'no-touch';
 
-				loadScript('<%=session.getAbsoluteUrl2("languages")%>/myaccount_' + SC.ENVIRONMENT.currentLanguage.locale + '.js?t=1644934158110');
+				loadScript('<%=session.getAbsoluteUrl2("languages")%>/myaccount_' + SC.ENVIRONMENT.currentLanguage.locale + '.js?t=1645183687914');
 			});
 			//Define a function to load script at runtime. The script can be removed of the generated html by the server seo, please see SCA.Checkout.Starter.js.
 			function loadScript (url)
@@ -233,8 +233,8 @@ var SC = window.SC = {
 			};
 		</script>
 
-		<script src="<%= session.getAbsoluteUrl2('myaccount.environment.shortcache.ssp?X-SC-Touchpoint=myaccount') %>&t=1644934158110"></script>
-		<script src="<%= session.getAbsoluteUrl2('customFieldsMetadata.ssp?')%>t=1644934158110"></script>
+		<script src="<%= session.getAbsoluteUrl2('myaccount.environment.shortcache.ssp?X-SC-Touchpoint=myaccount') %>&t=1645183687914"></script>
+		<script src="<%= session.getAbsoluteUrl2('customFieldsMetadata.ssp?')%>t=1645183687914"></script>
 		<% if (Error) { %>
 		<script>SC.ENVIRONMENT.contextError = <%= JSON.stringify(Error) %>;</script>
 		<% } %>
@@ -267,14 +267,14 @@ var SC = window.SC = {
 
     var isExtended = !!<%= isExtended %>
 	,	local_dependencies = {
-			css: '<%= session.getAbsoluteUrl2(app_includes.myaccount.css[0])%>?t=1644934158110'
-		,	templates: '<%= session.getAbsoluteUrl2(app_includes.myaccount.templates[0])%>?t=1644934158110'
-		,	js_core: '<%= session.getAbsoluteUrl2(core_js[0]) %>?t=1644934158110'
+			css: '<%= session.getAbsoluteUrl2(app_includes.myaccount.css[0])%>?t=1645183687914'
+		,	templates: '<%= session.getAbsoluteUrl2(app_includes.myaccount.templates[0])%>?t=1645183687914'
+		,	js_core: '<%= session.getAbsoluteUrl2(core_js[0]) %>?t=1645183687914'
 		};
 
     if(isExtended)
 	{
-		local_dependencies.js_extensions = '<%= session.getAbsoluteUrl2(extensions_js)%>?t=1644934158110';
+		local_dependencies.js_extensions = '<%= session.getAbsoluteUrl2(extensions_js)%>?t=1645183687914';
 	}
 
     if(!SC.isPageGenerator())
